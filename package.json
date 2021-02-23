@@ -1,0 +1,25 @@
+{
+  "name": "aqa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "startdev": "NODE_ENV=dev node app.js",
+    "startprod": "NODE_ENV=production node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbui468/aqa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbui468/aqa/issues"
+  },
+  "homepage": "https://github.com/tbui468/aqa#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
