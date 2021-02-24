@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "populate": "psql -U thomas -c \"\\i ~/Dev/aqa/populate.sql;\"",
     "startdev": "NODE_ENV=dev DEBUG=user node app.js",
     "startprod": "NODE_ENV=production node app.js"
   },
