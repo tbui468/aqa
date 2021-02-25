@@ -1,6 +1,7 @@
 //this is the API all controllers will use to access database
 const Pool = require('pg').Pool;
 const debug = require('debug')('user');
+const async = require('async');
 
 /* //use this for production/deployment on heroku
 const pool = new Pool({
@@ -18,12 +19,17 @@ const pool = new Pool({
   port: 5432
 });
 
-exports.query = function(text, params, callback) {
-  const start = Date.now();
-  return pool.query(text, params, (err, results) => {
+module.exports = {
+  async query(text, params) {
+    const start = Date.now();
+    const results = await pool.query(text, params);
     const duration = Date.now() - start;
     const rowCount = results ? results.rowCount : 'none';
     debug('executed query', { text: text, params: params, duration: duration + ' ms', rows: rowCount });
-    callback(err, results);
-  });
-};
+    return results;
+  },
+  async getClient() {
+
+  }
+}
+
