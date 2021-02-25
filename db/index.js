@@ -16,7 +16,8 @@ const pool = new Pool({
   host: 'localhost',
   database: 'thomas',
   password: 'password',
-  port: 5432
+  port: 5432,
+  max: 20
 });
 
 module.exports = {
@@ -29,7 +30,26 @@ module.exports = {
     return results;
   },
   async getClient() {
-
+    const client = await pool.connect();
+    const query = client.query; //saving for later?
+    const release = client.release; //saving for later?
+    const timeout = setTimeout(() => {
+      console.error('ypes');
+      console.error('ypes');
+    }, 5000);
+    //????
+    client.query = (...args) => {
+      client.lastQuery = args;
+      return query.apply(client, args);
+    }
+    //resetting??
+    client.release = () => {
+      clearTimeout(timeout);
+      client.query = query;
+      client.release = release;
+      return release.apply(client);
+    }
+    return client;
   }
 }
 

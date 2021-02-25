@@ -1,3 +1,6 @@
+//finish controller for question_detail
+//  currently just pulling question/users info
+//  should use question details to find list of corresponding answers AND the author of the question
 
 
 const express = require('express');
