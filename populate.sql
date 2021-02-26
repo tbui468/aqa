@@ -9,13 +9,14 @@ CREATE TABLE users(
   user_id SERIAL PRIMARY KEY,
   user_name TEXT,
   user_email TEXT,
+  user_password TEXT,
   user_weight INTEGER
 );
 
 /* add dummy user data */
-INSERT INTO users (user_name, user_email, user_weight) VALUES ('John', 'J@gmail.com', 1);
-INSERT INTO users (user_name, user_email, user_weight) VALUES ('Kappy', 'Kappy@hotmail.com', 2);
-INSERT INTO users (user_name, user_email, user_weight) VALUES ('Pooh', 'Bear@animal.com', 1);
+INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ('John', 'J@gmail.com', 'password0', 1);
+INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ('Kappy', 'Kappy@hotmail.com', 'password1', 2);
+INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ('Pooh', 'Bear@animal.com', 'password2', 1);
 
 
 /* create questions table */
@@ -47,6 +48,8 @@ INSERT INTO answers (answer_text, answer_date, answer_user, answer_question)
           VALUES ('No, birds are part of the simulation', current_timestamp, (SELECT user_id FROM users WHERE user_name='Kappy'), (SELECT question_id FROM questions WHERE question_id=1));
 INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 
           VALUES ('There is no honey', current_timestamp, (SELECT user_id FROM users WHERE user_name='Kappy'), (SELECT question_id FROM questions WHERE question_id=3));
+INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 
+          VALUES ('Better question:  where the money at?', current_timestamp, (SELECT user_id FROM users WHERE user_name='John'), (SELECT question_id FROM questions WHERE question_id=3));
 
 /* create votes table */
 CREATE TABLE votes(
