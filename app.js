@@ -5,58 +5,103 @@
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
+const bcrypt = require('bcryptjs');
 const LocalStrategy = require('passport-local').Strategy;
 require('dotenv').config();
 
+const db = require('./db/index');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const questionsRouter = require('./routes/questions');
-
 
 const port = process.env.PORT || 3000;
 const app = express();
 
 //set passport strategy
-/*
+
 passport.use(
   new LocalStrategy((username, password, done) => {
-    //do whatever I need with username and password (such as using bcrypt.compare)
-    //and then call done when finished.  If successful, be sure to pass user rows[0] to done() too (should never be more than one row)
-    //done(err, user (false if not valid), message)
-    //if err, return done(err)
-    //if no matchin username or password is wrong, return done(null, false) - first parameter is err (not used here) and optional 3rd parameter for message
-    //if okay, return done(null, user) - first parameter is null, and optonal 3rd parameter is message
-  });
-);*/
+    const results = db.query('SELECT * FROM users WHERE user_name=$1;', [username]);
+    results.then(function(result) {
+      if(result.rows  === undefined || result.rows.length === 0) {
+        return done(null, false, { message: 'Username not found' });
+      }else{
+        bcrypt.compare(password, result.rows[0].user_password, function(err, res) {
+          if(res) {
+            return done(null, result.rows[0], { message: 'User found in DB' });
+          }else{
+            return done(null, false, { message: 'Incorrect password' });
+          }
+        });
+      }
+    }).catch(function(err) {
+      return done(err, null, { message: 'Error connecting to database' });
+    });
+  })
+);
 
 //serializeUser - this function takes user object (row in our db) and sets it to req.session.passport.user
-//deserializeUser - this function takes req.session.passport.user and deserializes it, then sets req.user to it.  (that's why res.locals.currentUser = req.user works)
-//set passport/session as middleware
+passport.serializeUser(function(user, done) {
+  console.log('hi');
+  console.log(user.user_id);
+  done(null, user.user_id, { message: 'User serialized' });
+});
 
-//middleware (all requests pass through these middleware before getting to the routes)
-//app.use(A //init express-session
-  //init passport (using strategy specified above) note: this is called on every request
-  //connect passport with session
+//deserializeUser - this function takes req.session.passport.user and deserializes it, then sets req.user to it.  (that's why res.locals.currentUser = req.user works)
+passport.deserializeUser(function(id, done) {
+  console.log(id);
+  const results = db.query('SELECT * FROM users WHERE user_id=$1;', [id]);
+  results.then(function(result) {
+    if(result.rows === undefined || result.rows.length === 0) {
+      done(null, false, { message: 'session user id not found in database' });
+    }else{
+      done(null, result.rows[0]);
+    }
+  }).catch(function(err) {
+    done(err);
+  });
+});
+
+app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//optional: set res.locals.currentUser = req.user so that all routes down below have access to res.locals.currentUser (which will be null is no one is logged in)
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.user;
+  next();
+});
+
+
+///////////temp testing sessions////////////
+app.get('/currentUser', (req, res, next) => {
+  if(req.user) {
+    return res.json({message: req.user.user_name + ' is logged in'});
+  }else{
+    return res.json({ message: 'No user currently logged in' });
+  }
+});
 
 //routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
-/*
-app.use('/login', 
+
+app.post('/login', 
   passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/'
-  });
+    successRedirect: '/success',
+    failureRedirect: '/failure'
+  })
 );
-app.use('/logout', (req, res) => {
+
+app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
-});*/
+});
+
+
 
 //handle errors
 app.use(function(err, req, res, next) {

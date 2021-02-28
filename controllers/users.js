@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 exports.user_index = function(req, res, next) {
   let promise = db.query('SELECT * FROM users ORDER BY user_id ASC;');
   promise.then(function(result) {
-    res.status(200).json(result.rows);
+    return res.status(200).json(result.rows);
   }).catch(function(err) {
     return next(err);
   });
@@ -31,7 +31,7 @@ exports.user_create = [
         if(err) { return next(err); }
         let promise = db.query('INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ($1, $2, $3, 1);', [req.body.name, req.body.email, hashedpw]);
         promise.then(function(result) {
-          res.json({ message: 'new user created in database' });
+          return res.json({ message: 'new user created in database' });
         }).catch(function(err) {
           return next(err);
         });
@@ -43,7 +43,7 @@ exports.user_create = [
 exports.user_show = function(req, res, next) {
   let promise = db.query('SELECT * FROM users WHERE user_id=$1;', [req.params.id]);
   promise.then(function(result) {
-    res.status(200).json(result.rows);
+    return res.status(200).json(result.rows);
   }).catch(function(err) {
     return next(err);
   });
@@ -57,7 +57,7 @@ exports.user_edit = function(req, res, next) {
       name: result.rows[0].user_name,
       email: result.rows[0].user_email
     }
-    res.status(200).json(obj);
+    return res.status(200).json(obj);
   }).catch(function(err) {
     return next(err);
   });
