@@ -18,9 +18,9 @@ exports.user_new = function(req, res, next) {
 
 exports.user_create = [
 
-  body('name', 'Name must be specified').trim().isLength({ min: 1 }).escape(),
-  body('email', 'Email must be specified').trim().isLength({ min: 1 }).escape(),
-  body('password', 'Password must specified').trim().isLength({ min: 1 }).escape(),
+  body('name', 'Name must be specified').trim().isLength({ min: 1, max: 30}).escape(),
+  body('email', 'Email must be specified').trim().isLength({ min: 1, max: 30 }).escape(),
+  body('password', 'Password must specified').trim().isLength({ min: 5, max: 30 }).escape(),
 
   (req, res, next) => {
     const errors = validationResult(req);
@@ -68,8 +68,8 @@ exports.user_edit = function(req, res, next) {
 //later, only should allow logged in user to edit their own profile
 exports.user_update = [
 
-  body('name', 'Name must be specified').trim().isLength({min: 1}).escape(),
-  body('email', 'Email must be specified').trim().isLength({min: 1}).escape(),
+  body('name', 'Name must be specified').trim().isLength({min: 1, max: 30}).escape(),
+  body('email', 'Email must be specified').trim().isLength({min: 1, max: 30}).escape(),
 
   (req, res, next) => {
     const errors = validationResult(req);
