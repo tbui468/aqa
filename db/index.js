@@ -12,7 +12,7 @@ PORT='3000'*/
 
  //use this for production/deployment on heroku
 const pool = new Pool({
-  connectionString = process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
