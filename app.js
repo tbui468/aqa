@@ -63,15 +63,11 @@ passport.deserializeUser((id, done) => {
       done(err);
     });
 });
-/*
+
 const corsOptions = {
   origin: 'https://vigorous-kare-2dfaa2.netlify.app',
   optionsSuccessStatus: 200
-}; */
-const corsOptions = {
-  origin: "http://localhost:8080",
-  optionsSuccessStatus: 200,
-};
+}; 
 
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
