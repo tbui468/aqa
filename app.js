@@ -18,7 +18,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const questionsRouter = require("./routes/questions");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const app = express();
 
 // set passport strategy

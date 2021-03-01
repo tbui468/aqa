@@ -3,6 +3,13 @@ const Pool = require('pg').Pool;
 const debug = require('debug')('user');
 const async = require('async');
 
+/*
+DB_USER='thomas'
+DB_HOST='localhost'
+DB_DATABASE='thomas'
+DB_PASSWORD='password'
+PORT='3000'*/
+
  //use this for production/deployment on heroku
 const pool = new Pool({
   connectionString = process.env.DATABASE_URL,
