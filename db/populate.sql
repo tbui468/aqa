@@ -62,7 +62,3 @@ CREATE TABLE votes(
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='John'), 1); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, 1, 2);
 
-
-
-
-
