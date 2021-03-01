@@ -3,14 +3,14 @@ const Pool = require('pg').Pool;
 const debug = require('debug')('user');
 const async = require('async');
 
-/* //use this for production/deployment on heroku
+ //use this for production/deployment on heroku
 const pool = new Pool({
   connectionString = process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
-});*/
-
+});
+/*
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -18,7 +18,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: 5432,
   max: 20
-});
+});*/
 
 module.exports = {
   async query(text, params) {
