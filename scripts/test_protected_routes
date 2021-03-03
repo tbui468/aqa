@@ -1,0 +1,3 @@
+#!/bin/bash
+value=($(jq -r '.token' token.json))
+curl -H "Authorization: bearer ${value[@]}" http://localhost:3000/private

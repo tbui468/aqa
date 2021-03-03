@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -X POST -H "Content-Type:application/json" http://localhost:3000/login -d '{ "username":"name", "password":"password" }' -o token.json
