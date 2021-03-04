@@ -64,6 +64,7 @@ passport.deserializeUser((id, done) => {
 const corsOptions = {
   // origin: 'https://vigorous-kare-2dfaa2.netlify.app',
   origin: 'http://localhost:8080',
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 
@@ -81,37 +82,40 @@ app.use((req, res, next) => {
   next();
 });
 
-//@temp: move to separate router/controller files
-app.get('/private', (req, res) => {
-  if (req.user) {
-    return res.json({ message: "hello logged in user!" });
-  }
-  return res.json({ message: 'you CAN NOT access this route' });
-});
-
 // routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
+
+app.get('/profile', (req, res, next) => {
+  console.log(req.user);
+  if(!req.user) {
+    return res.status(404).json({ message: "Log in to access the profile page" });
+  }else{
+    return res.status(200).json(req.user);
+    //can also query database to return other info here too
+  }
+});
 // @temp: should only be accessible by users with valid tokens
 //app.use('/private', passport.authenticate('local'), privateRouter); 
 
-
+/*
 app.post('/login',
   passport.authenticate('local', {
-    successRedirect: '/success',
-    failureRedirect: '/failure'
+    successRedirect: 'http://localhost:8080/success',
+    failureRedirect: 'http://localhost:8080/failure'
   })
-);
+);*/
+app.post('/login', passport.authenticate('local'));
 
 //@temp: move to separate router/controller files
 app.get('/logout', (req, res) => {
   req.logout();
-  res.redirect('/');
+  return res.status(200).json({ message: "Successfully logged out" });
 });
 
 // handle errors
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('shit broke');
 });
