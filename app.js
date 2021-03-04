@@ -1,5 +1,4 @@
-// need to integrate JWT (and remove sessions)
-//    test JWT with /private routes (both GET and POST)
+//convert back to session, since JWT introduces too much complexity for scalability that's not needed
 
 const express = require('express');
 const session = require('express-session'); //@remove after tokens are functional
@@ -7,9 +6,6 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const LocalStrategy = require('passport-local').Strategy;
-const passportJWT = require('passport-jwt');
-const JWTStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -47,20 +43,23 @@ passport.use(
   }),
 );
 
-passport.use(
-  new JWTStrategy({
-    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
-  }, function(jwtPayload, done) {
-    const results = db.query('SELECT * FROM users WHERE user_id=$1', [jwtPayload.user_id]);
-    return results
-    .then((result) => {
+passport.serializeUser((user, done) => {
+  done(null, user.user_id);
+});
+
+passport.deserializeUser((id, done) => {
+  const results = db.query("SELECT * FROM users WHERE user_id=$1;", [id]);
+  results
+  .then((result) => {
+    if(result.rows === undefined || result.rows.length === 0) {
+      done(null, false);
+    }else{
       done(null, result.rows[0]);
-    }).catch((err) => {
-      done(err, null);
-    });
-  })
-);
+    }
+  }).catch((err) => {
+    done(err);
+  });
+});
 
 const corsOptions = {
   // origin: 'https://vigorous-kare-2dfaa2.netlify.app',
@@ -68,7 +67,9 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
+app.use(passport.session());
 app.use(compression());
 app.use(helmet());
 app.use(cors(corsOptions));
@@ -81,11 +82,11 @@ app.use((req, res, next) => {
 });
 
 //@temp: move to separate router/controller files
-app.get('/currentUser', (req, res) => {
+app.get('/private', (req, res) => {
   if (req.user) {
-    return res.json({ message: `${req.user.user_name} is logged in` });
+    return res.json({ message: "hello logged in user!" });
   }
-  return res.json({ message: 'No user currently logged in' });
+  return res.json({ message: 'you CAN NOT access this route' });
 });
 
 // routes
@@ -93,40 +94,27 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
 // @temp: should only be accessible by users with valid tokens
-app.use('/private', passport.authenticate('jwt', { session: false }), privateRouter); 
+//app.use('/private', passport.authenticate('local'), privateRouter); 
 
-//need custom authentication here to make use of JWT strategy
+
+app.post('/login',
+  passport.authenticate('local', {
+    successRedirect: '/success',
+    failureRedirect: '/failure'
+  })
+);
+
 //@temp: move to separate router/controller files
-
-app.post('/login', function(req, res, next) {
-  passport.authenticate('local', { session: false }, (err, user, info) => {
-    if(err || !user) {
-      return res.status(400).json({
-        message: 'Error trying to login',
-        user: user,
-        info: info
-      });
-    }else{
-      req.login(user, { session: false }, (err) => {
-        if(err) { res.send(err); }
-        const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 120 });
-        return res.json({ token: token });
-      });
-    }
-  })(req, res, next);
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
 });
 
-  //@temp: move to separate router/controller files
-  app.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/');
-  });
-
-  // handle errors
-  app.use((err, req, res) => {
-    console.error(err.stack);
-    res.status(500).send('shit broke');
-  });
+// handle errors
+app.use((err, req, res) => {
+  console.error(err.stack);
+  res.status(500).send('shit broke');
+});
 
 app.listen(port, () => {
   console.log(`App is listening on port: ${port}`);

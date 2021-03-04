@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -b cookie.txt http://localhost:3000/logout
