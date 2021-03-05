@@ -3,11 +3,11 @@ const db = require('./../db/index');
 
 exports.question_list = function(req, res, next) {
   const queryText = `
-    SELECT questions.question_text, users.user_name, questions.question_date
+    SELECT questions.question_id, questions.question_text, users.user_name, questions.question_date
     FROM questions INNER JOIN users ON questions.question_user=users.user_id
     ORDER BY questions.question_date ASC;
   `;
-  let promise = db.query(queryText);
+  let promise = db.query(queryText, []);
   promise.then(function(result) {
     res.status(200).json(result.rows);
   }).catch(function(err) {
