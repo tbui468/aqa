@@ -18,7 +18,7 @@ exports.user_new = function(req, res, next) {
 
 exports.user_create = [
 
-  body('name', 'Name must be specified').trim().isLength({ min: 1, max: 30}).escape(),
+  body('username', 'Name must be specified').trim().isLength({ min: 1, max: 30}).escape(),
   body('email', 'Email must be specified').trim().isLength({ min: 1, max: 30 }).escape(),
   body('password', 'Password must specified').trim().isLength({ min: 5, max: 30 }).escape(),
 
@@ -29,7 +29,7 @@ exports.user_create = [
     }else{
       bcrypt.hash(req.body.password, 10, (err, hashedpw) => {
         if(err) { return next(err); }
-        let promise = db.query('INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ($1, $2, $3, 1);', [req.body.name, req.body.email, hashedpw]);
+        let promise = db.query('INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ($1, $2, $3, 1);', [req.body.username, req.body.email, hashedpw]);
         promise.then(function(result) {
           return res.json({ message: 'new user created in database' });
         }).catch(function(err) {
