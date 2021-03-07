@@ -6,10 +6,10 @@ const authorizationsController = require('./../controllers/authorizations');
 
 router.get('/', questionsController.question_list);
 //router.get('/new', [authorizationsController.logged_in, questionsController.question_new]); //@todo
-//router.post('/', [authorizationsController.logged_in, questionsController.question_create]); //@todo
+router.post('/', [authorizationsController.logged_in, questionsController.question_create]);
 router.get('/:id', questionsController.question_show);
-//router.get('/:id/edit', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.user_edit]); //@todo
-//router.put('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.user_update]); //@todo
-//router.delete('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.user_delete]); //@todo
+//router.get('/:id/edit', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.question_edit]); //@todo
+//router.put('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.question_update]); //@todo
+router.delete('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.question_delete]);
 
 module.exports = router;

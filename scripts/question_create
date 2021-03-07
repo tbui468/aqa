@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -b cookie.txt -X POST http://localhost:3000/questions -H "Content-Type: application/json" -d '{ "text": "This is a new question" }'

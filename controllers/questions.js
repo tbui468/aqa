@@ -16,21 +16,41 @@ exports.question_list = async function(req, res, next) {
     }
 }
 
-/*
-  question_text TEXT,
-  question_user INTEGER REFERENCES users (user_id)*/
-/*
-INSERT INTO questions (question_text, question_date, question_user) 
-              VALUES ('Are birds real?', current_timestamp, (SELECT user_id FROM users WHERE user_name='John'));*/
-
-//test using curl and posting to this route with json body
 exports.question_create = [
     body('text', 'Question needs to be between 1 and 280 characters').trim().isLength({ min: 1, max: 280 }).escape(),
-    body('user_id', 'Author id must be provided').trim().isLength({ min: 1 }).escape(),
     async (req, res, next) => {
-        //need to make sure user_id matches someone in the database before inserting question
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.json({ message: "question format invalid" });//@todo: should return list of errors and have react render problems
+        }else{
+            try{
+                const queryText = `
+                    INSERT INTO questions (question_text, question_date, question_user)
+                    VALUES ($1, current_timestamp, $2);
+                `;
+                const result = await db.query(queryText, [req.body.text, req.user.user_id]);
+                return res.json({ message: "New question posted!" });
+            }catch(err){
+                return next(err);
+            }
+        }
     }
 ]
+
+//@todo: when answers and votes are implemented, need to go through entire database and delete
+//answers and votes with foreign keys referencing this question. Or dont and just check and delete 
+//when each answer or vote when accessed for the first time after question is deleted (check if foreign keys are valid)
+exports.question_delete = async function(req, res, next) {
+    try{
+        const queryText = `
+            DELETE FROM questions WHERE question_id=$1;
+        `;
+        const result = db.query(queryText, [req.params.id]);
+        return res.status(200).json({ message: "Question deleted" });
+    }catch(err){
+        return next(err);
+    }
+};
 
 exports.question_show = async function(req, res, next) {
 
