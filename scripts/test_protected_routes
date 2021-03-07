@@ -1,2 +1,2 @@
 #!/bin/bash
-curl -b cookie.txt http://localhost:3000/private
+curl -b cookie.txt http://localhost:3000/users/7

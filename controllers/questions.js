@@ -1,13 +1,13 @@
 const db = require('./../db/index');
-
+const { body, validationResult } = require('express-validator');
 
 exports.question_list = async function(req, res, next) {
-    const queryText = `
-        SELECT questions.question_id, questions.question_text, users.user_name, questions.question_date
-        FROM questions INNER JOIN users ON questions.question_user=users.user_id
-        ORDER BY questions.question_date ASC;
-    `;
     try{
+        const queryText = `
+            SELECT questions.question_id, questions.question_text, users.user_name, questions.question_date
+            FROM questions INNER JOIN users ON questions.question_user=users.user_id
+            ORDER BY questions.question_date ASC;
+        `;
         const result = await db.query(queryText, []);
         return res.status(200).json(result.rows);
     }catch(err){
@@ -15,7 +15,22 @@ exports.question_list = async function(req, res, next) {
     }
 }
 
-//use async.parallel or async.waterfall
+/*
+  question_text TEXT,
+  question_user INTEGER REFERENCES users (user_id)*/
+/*
+INSERT INTO questions (question_text, question_date, question_user) 
+              VALUES ('Are birds real?', current_timestamp, (SELECT user_id FROM users WHERE user_name='John'));*/
+
+//test using curl and posting to this route with json body
+exports.question_create = [
+    body('text', 'Question needs to be between 1 and 280 characters').trim().isLength({ min: 1, max: 280 }).escape(),
+    body('user_id', 'Author id must be provided').trim().isLength({ min: 1 }).escape(),
+    async (req, res, next) => {
+        //need to make sure user_id matches someone in the database before inserting question
+    }
+]
+
 exports.question_show = async function(req, res, next) {
 
     try{

@@ -88,25 +88,18 @@ app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
 
 app.get('/profile', (req, res, next) => {
-  console.log(req.user);
   if(!req.user) {
     return res.status(404).json({ message: "Log in to access the profile page" });
   }else{
     return res.status(200).json(req.user);
-    //can also query database to return other info here too
   }
 });
-// @temp: should only be accessible by users with valid tokens
-//app.use('/private', passport.authenticate('local'), privateRouter); 
 
-/*
-app.post('/login',
-  passport.authenticate('local', {
-    successRedirect: 'http://localhost:8080/success',
-    failureRedirect: 'http://localhost:8080/failure'
-  })
-);*/
-app.post('/login', passport.authenticate('local'));
+app.post('/login', [passport.authenticate('local'), 
+    (req, res, next) => {
+        return res.status(200).json({message: "Successfully logged in"});
+    }
+]);
 
 //@temp: move to separate router/controller files
 app.get('/logout', (req, res) => {

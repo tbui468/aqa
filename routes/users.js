@@ -10,12 +10,13 @@ const usersController = require('./../controllers/users');
   //  Update - /blogs/:id - PUT - update blog and redirect
   //  Destroy - /blogs/:id - DELTE - delete blog from db and redirect
 
-router.get('/', usersController.user_index);
+
+router.get('/', usersController.user_index); //should only allow admins to see this
 router.get('/new', usersController.user_new);
 router.post('/', usersController.user_create);
-router.get('/:id', usersController.user_show);
-router.get('/:id/edit', usersController.user_edit);
-router.put('/:id', usersController.user_update);
-router.delete('/:id', usersController.user_delete);
+router.get('/:id', [usersController.user_authorize, usersController.user_show]);
+router.get('/:id/edit', [usersController.user_authorize, usersController.user_edit]);
+router.put('/:id', [usersController.user_authorize, usersController.user_update]);
+router.delete('/:id', [usersController.user_authorize, usersController.user_delete]);
 
 module.exports = router;

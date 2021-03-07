@@ -2,6 +2,17 @@ const db = require('./../db/index');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 
+//only allow users to see/edit own profile
+exports.user_authorize = function(req, res, next) {
+    if(!req.user) {
+        return res.status(404).json({ message: "Log in to access the profile page" });
+    }else if(req.user.user_id != req.params.id){
+        return res.status(404).json({ message: "You are not authorized to see this page" });
+    }else{
+        next();
+    }
+};
+
 exports.user_index = function(req, res, next) {
   let promise = db.query('SELECT * FROM users ORDER BY user_id ASC;');
   promise.then(function(result) {
