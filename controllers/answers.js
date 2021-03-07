@@ -16,6 +16,8 @@ exports.answer_list = async function(req, res, next) {
     }
 };
 
+
+//put votes here
 exports.answer_show = async function(req, res, next) {
     try{
         const queryText = `
@@ -29,23 +31,7 @@ exports.answer_show = async function(req, res, next) {
         next(err);
     }
 };
-//req.params.question_id
-//req.user (and all key/values that comes with)
-/*
-CREATE TABLE answers(
-  answer_id SERIAL PRIMARY KEY,
-  answer_text TEXT,
-  answer_date DATE,
-  answer_user INTEGER REFERENCES users (user_id),
-  answer_question INTEGER REFERENCES questions (question_id)
-);*/
-/*
-INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 
-          VALUES ('No, birds are part of the simulation',
-                    current_timestamp,
-                    (SELECT user_id FROM users WHERE user_name='Kappy'),
-                    (SELECT question_id FROM questions WHERE question_id=1));
-          */
+
 exports.answer_create = [
     body('text', 'Invalid answer').trim().isLength({ min: 1, max: 280 }).escape(),
     async (req, res, next) => {

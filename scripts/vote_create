@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -b cookie.txt -X POST http://localhost:3000/questions/1/answers/1/votes

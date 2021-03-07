@@ -65,3 +65,24 @@ exports.owns_answer = async function(req, res, next) {
         }
     }
 };
+
+exports.owns_vote = async function(req, res, next) {
+    if(!req.user) {
+        return res.status(404).json({ message: "Log in to access the vote page" });
+    }else{
+        try{
+            const queryText = `
+                SELECT * FROM votes
+                WHERE vote_user=$1 AND vote_id=$2;
+            `;
+            const result = await db.query(queryText, [req.user.user_id, req.params.vote_id]);
+            if(result.rows.length === 0) {
+                return res.status(400).json({ message: "You are not the owner of this vote" });
+            }else{
+                next();
+            }
+        }catch(err){
+            return next(err);
+        }
+    }
+}
