@@ -1,6 +1,7 @@
 const db = require('./../db/index');
 const { body, validationResult } = require('express-validator');
 
+
 exports.question_list = async function(req, res, next) {
     try{
         const queryText = `

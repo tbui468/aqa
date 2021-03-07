@@ -2,14 +2,14 @@
 //const router = new Router();
 const router = require('express').Router();
 const questionsController = require('./../controllers/questions');
+const authorizationsController = require('./../controllers/authorizations');
 
 router.get('/', questionsController.question_list);
-//router.get('/new', questionsController.question_new); //not really using this now, but should base front end form off this data
-router.post('/', questionsController.question_create);
+//router.get('/new', [authorizationsController.logged_in, questionsController.question_new]); //@todo
+//router.post('/', [authorizationsController.logged_in, questionsController.question_create]); //@todo
 router.get('/:id', questionsController.question_show);
-/*
-router.get('/:id/edit', questionsController.user_edit);
-router.put('/:id', questionsController.user_update);
-router.delete('/:id', questionsController.user_delete);*/
+//router.get('/:id/edit', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.user_edit]); //@todo
+//router.put('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.user_update]); //@todo
+//router.delete('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.user_delete]); //@todo
 
 module.exports = router;
