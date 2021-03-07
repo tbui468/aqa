@@ -16,7 +16,7 @@ const db = require('./db/index');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const questionsRouter = require('./routes/questions');
-const privateRouter = require('./routes/private'); //@temp
+const answersRouter = require('./routes/answers');
 
 const port = process.env.PORT;
 const app = express();
@@ -84,16 +84,18 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/questions', questionsRouter);
+app.use('/users', usersRouter); //users/:user_id/answers - all answers belonging to user.  include /:answer_id to get specific question
+app.use('/questions', questionsRouter); //questions/:question_id/answers - all answers belonging to question.  Include /:answer_id to get specific answer
+app.use('/questions', answersRouter);
 
+/*
 app.get('/profile', (req, res, next) => {
   if(!req.user) {
     return res.status(404).json({ message: "Log in to access the profile page" });
   }else{
     return res.status(200).json(req.user);
   }
-});
+});*/
 
 app.post('/login', [passport.authenticate('local'), 
     (req, res, next) => {

@@ -46,7 +46,22 @@ exports.owns_question = async function(req, res, next) {
     }
 };
 
-//@todo
-exports.owns_answer = function(req, res, next) {
-    next();
+exports.owns_answer = async function(req, res, next) {
+    if(!req.user) {
+        return res.status(404).json({ message: "Log in to access the question page" });
+    }else{
+        try{
+            const queryText = `
+                SELECT * FROM answers WHERE answer_id=$1 AND answer_user=$2; 
+            `;
+            const result = await db.query(queryText, [req.params.answer_id, req.user.user_id]);
+            if(result.rows.length === 0) {
+                return res.status(404).json({ message: "You are not the author of this question!" });
+            }else{
+                next();
+            }
+        }catch(err){
+            return next(err);
+        }
+    }
 };
