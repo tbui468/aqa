@@ -1,5 +1,6 @@
 const db = require('./../db/index');
 const { body, validationResult } = require('express-validator');
+const { user_compute_weights } = require('./users');
 
 exports.answer_list = async function(req, res, next) {
     try{
@@ -16,7 +17,6 @@ exports.answer_list = async function(req, res, next) {
     }
 };
 
-
 //put votes here
 exports.answer_show = async function(req, res, next) {
     try{
@@ -26,7 +26,12 @@ exports.answer_show = async function(req, res, next) {
             WHERE answers.answer_question=$1 AND answers.answer_id=$2;
         `;
         const result = await db.query(queryText, [req.params.question_id, req.params.answer_id]);
-        return res.status(200).json(result.rows);
+        const weight = await answer_compute_weight(req.params.answer_id); //temp
+        const obj = {
+            weight: weight,
+            answer: result.rows[0]
+        }
+        return res.status(200).json(obj);
     }catch(err){
         next(err);
     }
@@ -64,4 +69,59 @@ exports.answer_delete = async function(req, res, next) {
     }catch(err){
         return next(err);
     }
+};
+
+const answer_compute_weight = async function(answer_id) {
+    let weight = 0;
+    try{
+        const client = await db.getClient(); //get topic
+
+        //get topic
+        try{
+            const queryText0 = `
+                SELECT questions.question_topic FROM answers
+                INNER JOIN questions ON answers.answer_question=questions.question_id
+                WHERE answers.answer_id=$1;
+            `;
+            const result0 = await client.query(queryText0, [answer_id]);
+            const topic = result0.rows[0];
+            //get a list of user ids that voted for this answer
+            
+            const queryText1 = `
+                SELECT users.user_id FROM votes
+                INNER JOIN users ON votes.vote_user=users.user_id
+                WHERE votes.vote_answer=$1;
+            `;
+            const result1 = await client.query(queryText1, [answer_id]);
+
+            for(let i = 0; i < result1.rows.length; i++) {
+                const weights = await user_compute_weights(['medicine', 'business', 'history'], result1.rows[i].user_id);
+                switch(topic.question_topic) {
+                    case 'medicine':
+                        weight += weights[0];
+                        break;
+                    case 'business':
+                        weight += weights[1];
+                        break;
+                    case 'history':
+                        weight += weights[2];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }catch(err){
+            client.release();
+            throw err;
+        }
+
+        client.release();
+    }catch(err){
+        throw err;
+    }
+
+    return weight;
 }
+
+module.exports.answer_compute_weight = answer_compute_weight;
+

@@ -114,10 +114,10 @@ const user_compute_weights = async function(topics, user_id) {
         for(let i = 0; i < topics.length; i++) {
             try{
                 const queryString = `
-                SELECT votes.vote_id FROM votes
-                INNER JOIN answers ON votes.vote_answer=answers.answer_id
-                INNER JOIN questions ON answers.answer_question=questions.question_id
-                WHERE questions.question_topic=$1 AND answers.answer_user=$2;
+                    SELECT votes.vote_id FROM votes
+                    INNER JOIN answers ON votes.vote_answer=answers.answer_id
+                    INNER JOIN questions ON answers.answer_question=questions.question_id
+                    WHERE questions.question_topic=$1 AND answers.answer_user=$2;
                 `;
                 const result = await client.query(queryString, [topics[i], user_id]);
                 const weight = result.rows.length + 100;
@@ -133,4 +133,6 @@ const user_compute_weights = async function(topics, user_id) {
     }
 
     return weights;
-}
+};
+
+module.exports.user_compute_weights = user_compute_weights;

@@ -1,5 +1,6 @@
 const db = require('./../db/index');
 const { body, validationResult } = require('express-validator');
+const { answer_compute_weight } = require('./answers');
 
 
 exports.question_list = async function(req, res, next) {
@@ -80,7 +81,10 @@ exports.question_show = async function(req, res, next) {
                 throw err;
             });
 
+        const weight = await question_compute_answers_weight(req.params.id);
+
         let obj = {
+            weight: weight,
             question: p0.rows,
             answer: p1.rows,
         }
@@ -95,4 +99,23 @@ exports.question_show = async function(req, res, next) {
         return next(err);
     }
 
+}
+
+const question_compute_answers_weight = async function(question_id) {
+    let weight = 0;
+    try{
+        const queryText = `
+            SELECT answers.answer_id FROM answers
+            WHERE answers.answer_question=$1;
+        `;
+        const result = await db.query(queryText, [question_id]);
+        
+        for(let i = 0; i < result.rows.length; i++) {
+            const answerWeight = await answer_compute_weight(result.rows[i].answer_id);
+            weight += answerWeight;
+        }
+    }catch(err){
+        throw err;
+    }
+    return weight;
 }
