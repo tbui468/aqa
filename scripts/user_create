@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -b cookie.txt -X POST http://localhost:3000/users -H "Content-Type: application/json" -d '{ "username": "name1", "email":"name1@gmail.com", "password":"password1" }'

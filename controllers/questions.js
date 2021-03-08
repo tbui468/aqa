@@ -5,7 +5,7 @@ const { body, validationResult } = require('express-validator');
 exports.question_list = async function(req, res, next) {
     try{
         const queryText = `
-            SELECT questions.question_id, questions.question_text, users.user_name, questions.question_date
+            SELECT questions.question_id, questions.question_text, questions.question_topic, users.user_name
             FROM questions INNER JOIN users ON questions.question_user=users.user_id
             ORDER BY questions.question_date ASC;
         `;
@@ -18,6 +18,7 @@ exports.question_list = async function(req, res, next) {
 
 exports.question_create = [
     body('text', 'Question needs to be between 1 and 280 characters').trim().isLength({ min: 1, max: 280 }).escape(),
+    body('topic', 'Topic needs to be between 1 and 280 characters').trim().isLength({ min: 1, max: 280 }).escape(),
     async (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
@@ -58,7 +59,7 @@ exports.question_show = async function(req, res, next) {
         const client = await db.getClient();
 
         const questionQuery = `
-            SELECT questions.question_text, users.user_name, questions.question_date
+            SELECT questions.question_text, questions.question_topic, users.user_name, questions.question_date
             FROM questions INNER JOIN users ON questions.question_user=users.user_id WHERE questions.question_id=$1; 
         `;
 

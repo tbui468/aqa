@@ -29,7 +29,7 @@ exports.user_create = [
     }else{
       bcrypt.hash(req.body.password, 10, (err, hashedpw) => {
         if(err) { return next(err); }
-        let promise = db.query('INSERT INTO users (user_name, user_email, user_password, user_weight) VALUES ($1, $2, $3, 1);', [req.body.username, req.body.email, hashedpw]);
+        let promise = db.query('INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3);', [req.body.username, req.body.email, hashedpw]);
         promise.then(function(result) {
           return res.json({ message: 'new user created in database' });
         }).catch(function(err) {
@@ -40,13 +40,20 @@ exports.user_create = [
   }
 ]
 
-exports.user_show = function(req, res, next) {
-  let promise = db.query('SELECT * FROM users WHERE user_id=$1;', [req.params.id]);
-  promise.then(function(result) {
-    return res.status(200).json(result.rows);
-  }).catch(function(err) {
-    return next(err);
-  });
+exports.user_show = async function(req, res, next) {
+    try{
+        const result = await db.query('SELECT * FROM users WHERE user_id=$1;', [req.params.id]);
+        const weightsResult = await user_compute_weights(['medicine', 'business', 'history'], req.params.id);
+        const obj = {
+            medicine: weightsResult[0],
+            business: weightsResult[1],
+            history: weightsResult[2],
+            user: result.rows[0]
+        };
+        return res.status(200).json(obj);
+    }catch(err){
+        return next(err);
+    }
 }
 
 //return json of current information to populate view (not weight or password)
@@ -96,4 +103,34 @@ exports.user_delete = function(req, res, next) {
   }).catch(function(err) {
     return next(err);
   });
+}
+
+
+const user_compute_weights = async function(topics, user_id) {
+    const weights = [];
+
+    try{
+        const client = await db.getClient();
+        for(let i = 0; i < topics.length; i++) {
+            try{
+                const queryString = `
+                SELECT votes.vote_id FROM votes
+                INNER JOIN answers ON votes.vote_answer=answers.answer_id
+                INNER JOIN questions ON answers.answer_question=questions.question_id
+                WHERE questions.question_topic=$1 AND answers.answer_user=$2;
+                `;
+                const result = await client.query(queryString, [topics[i], user_id]);
+                const weight = result.rows.length + 100;
+                weights.push(weight);
+            }catch(err){
+                client.release();
+                throw err;        
+            }
+        }
+        client.release();
+    }catch(err){
+        throw err;
+    }
+
+    return weights;
 }
