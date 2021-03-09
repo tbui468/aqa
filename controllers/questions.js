@@ -71,7 +71,7 @@ exports.question_show = async function(req, res, next) {
             });
 
         const answerQuery = `
-            SELECT answers.answer_text, users.user_name, answers.answer_date
+            SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id
             FROM answers INNER JOIN users ON answers.answer_user=users.user_id WHERE answers.answer_question=$1;
         `;
 
@@ -81,12 +81,19 @@ exports.question_show = async function(req, res, next) {
                 throw err;
             });
 
-        const weight = await question_compute_answers_weight(req.params.id);
+        const totalWeight = await question_compute_answers_weight(req.params.id);
+
+        //calculate percent here and assign it to object
+        let answers = p1.rows;
+
+        for(let i = 0; i < answers.length; i++) {
+            const weight = await answer_compute_weight(answers[i].answer_id);
+            answers[i].answer_percent = weight / totalWeight;
+        }
 
         let obj = {
-            weight: weight,
-            question: p0.rows,
-            answer: p1.rows,
+            question: p0.rows[0],
+            answers: [answers],
         }
 
         if(p0.rows.length == 0) throw new Error('hi');
