@@ -93,7 +93,7 @@ exports.question_show = async function(req, res, next) {
 
         let obj = {
             question: p0.rows[0],
-            answers: [answers],
+            answers: answers
         }
 
         if(p0.rows.length == 0) throw new Error('hi');
