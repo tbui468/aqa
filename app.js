@@ -1,12 +1,13 @@
-//convert back to session, since JWT introduces too much complexity for scalability that's not needed
+//could start replacing third party middleware with my own middleware (to learn and for ownership over more of the system)
+    //express-validator - could replace with own middleware (fourth)
 
 const express = require('express');
-const session = require('express-session'); //@remove after tokens are functional
-const passport = require('passport');
+const session = require('express-session'); //could replace with this with own middleware (third)
+const passport = require('passport'); //could replace with with my own middleware (first)
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const LocalStrategy = require('passport-local').Strategy;
-const cors = require('cors');
+//const jwt = require('jsonwebtoken');
+const LocalStrategy = require('passport-local').Strategy; //could replace this with my own middleware (first)
+const cors = require('cors'); //could replace this with my own middleware (second)
 const helmet = require('helmet');
 const compression = require('compression');
 

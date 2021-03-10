@@ -12,6 +12,7 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });*/
+
 //use this for development
 const pool = new Pool({
     user: process.env.DB_USER,
