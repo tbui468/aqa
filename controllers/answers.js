@@ -84,30 +84,19 @@ const answer_compute_weight = async function(answer_id) {
                 WHERE answers.answer_id=$1;
             `;
             const result0 = await client.query(queryText0, [answer_id]);
-            const topic = result0.rows[0];
-            //get a list of user ids that voted for this answer
-            
+            const topic = result0.rows[0].question_topic;
+
             const queryText1 = `
                 SELECT users.user_id FROM votes
                 INNER JOIN users ON votes.vote_user=users.user_id
                 WHERE votes.vote_answer=$1;
             `;
             const result1 = await client.query(queryText1, [answer_id]);
-
             for(let i = 0; i < result1.rows.length; i++) {
-                const weights = await user_compute_weights(['medicine', 'business', 'history'], result1.rows[i].user_id);
-                switch(topic.question_topic) {
-                    case 'medicine':
-                        weight += weights[0];
-                        break;
-                    case 'business':
-                        weight += weights[1];
-                        break;
-                    case 'history':
-                        weight += weights[2];
-                        break;
-                    default:
-                        break;
+                const weights = await user_compute_weights(result1.rows[i].user_id); 
+                for(let j = 0; j < weights.length; j++) {
+                    if(topic === weights[j].question_topic) weight += parseFloat(weights[j].count);
+                    else weight += 100;
                 }
             }
         }catch(err){
@@ -119,7 +108,6 @@ const answer_compute_weight = async function(answer_id) {
     }catch(err){
         throw err;
     }
-
     return weight;
 }
 

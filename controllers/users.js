@@ -43,11 +43,9 @@ exports.user_create = [
 exports.user_show = async function(req, res, next) {
     try{
         const result = await db.query('SELECT * FROM users WHERE user_id=$1;', [req.params.id]);
-        const weightsResult = await user_compute_weights(['medicine', 'business', 'history'], req.params.id);
+        const weightsResult = await user_compute_weights(req.params.id);
         const obj = {
-            medicine: weightsResult[0],
-            business: weightsResult[1],
-            history: weightsResult[2],
+            weights: weightsResult,
             user: result.rows[0]
         };
         return res.status(200).json(obj);
@@ -96,43 +94,38 @@ exports.user_update = [
 //this gets complicated when we need to delete a bunch of answers/questions/votes belonging to a user before we can delete user
 //  for now, just delete the user
 //later, only should allow logged in user to delete their own profile
-exports.user_delete = function(req, res, next) {
-    let promise = db.query('DELETE FROM users WHERE user_id=$1;', [req.params.id]);
-    promise.then(function(result) {
+exports.user_delete = async function(req, res, next) {
+    try{
+        const queryText = `
+            DELETE FROM users WHERE user_id=$1;
+        `;
+        const result = await db.query(queryText, [req.params.id]);
         return res.status(200).json({message: 'user deleted' });
-    }).catch(function(err) {
+    }catch(err){
         return next(err);
-    });
+    }
 }
 
 
-const user_compute_weights = async function(topics, user_id) {
-    const weights = [];
-
+const user_compute_weights = async function(user_id) {
     try{
-        const client = await db.getClient();
-        for(let i = 0; i < topics.length; i++) {
-            try{
-                const queryString = `
-                SELECT votes.vote_id FROM votes
-                INNER JOIN answers ON votes.vote_answer=answers.answer_id
-                INNER JOIN questions ON answers.answer_question=questions.question_id
-                WHERE questions.question_topic=$1 AND answers.answer_user=$2;
-                `;
-                const result = await client.query(queryString, [topics[i], user_id]);
-                const weight = result.rows.length + 100;
-                weights.push(weight);
-            }catch(err){
-                client.release();
-                throw err;        
-            }
+        const queryText = `
+            SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
+            INNER JOIN answers ON votes.vote_answer=answers.answer_id
+            INNER JOIN questions ON answers.answer_question=questions.question_id
+            WHERE answers.answer_user=$1
+            GROUP BY questions.question_topic;
+        `;
+        const result = await db.query(queryText, [user_id]); 
+
+        for(let i = 0; i < result.rows.length; i++) {
+            result.rows[i].count = parseFloat(result.rows[i].count) + 100;
         }
-        client.release();
+
+        return result.rows;
     }catch(err){
         throw err;
     }
-
-    return weights;
-};
+}
 
 module.exports.user_compute_weights = user_compute_weights;

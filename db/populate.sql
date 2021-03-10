@@ -5,6 +5,7 @@
 INSERT INTO users (user_name, user_email, user_password) VALUES ('John', 'J@gmail.com', 'password0');
 INSERT INTO users (user_name, user_email, user_password) VALUES ('Kappy', 'Kappy@hotmail.com', 'password1');
 INSERT INTO users (user_name, user_email, user_password) VALUES ('Pooh', 'Bear@animal.com', 'password2');
+INSERT INTO users (user_name, user_email, user_password) VALUES ('Zebra', 'zebra@animal.com', 'password2');
 
 
 /* add dummy question data */

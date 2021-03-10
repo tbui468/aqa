@@ -119,7 +119,7 @@ const question_compute_answers_weight = async function(question_id) {
         
         for(let i = 0; i < result.rows.length; i++) {
             const answerWeight = await answer_compute_weight(result.rows[i].answer_id);
-            weight += answerWeight;
+            weight += parseFloat(answerWeight);
         }
     }catch(err){
         throw err;
