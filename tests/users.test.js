@@ -26,18 +26,40 @@ describe('/users GET', () => {
         }
     });
 });
-/*
-//need to implement users logging to test this route since profile pages are private
-describe('/users/1 GET', () => {
-    it('show user data', async (done) => {
+
+describe('/users/:id GET - checking topic weights', () => {
+    //bob should have 104 history, and no medical (100 will be used in this case)
+    it('Check Bob topic weights', async (done) => {
         try{
             const res = await request(app)
-                .get('/users/1')
-            expect(res.status).toEqual(400);
+                .get('/users/2')
+            expect(res.status).toEqual(200);
+
+            expect(res.body.weights.length).toEqual(1);
+            expect(res.body.weights[0].question_topic).toEqual('history');
+            expect(res.body.weights[0].count).toEqual(104);
             return done();
         }catch(err){
             return done(err);
         }
     });
-});*/
+
+    //Catherine should have 101 history, and 105 medical
+    it('Check Catherine topic weights', async (done) => {
+        try{
+            const res = await request(app)
+                .get('/users/3')
+            expect(res.status).toEqual(200);
+
+            expect(res.body.weights.length).toEqual(2);
+            expect(res.body.weights[0].question_topic).toEqual('history');
+            expect(res.body.weights[0].count).toEqual(101);
+            expect(res.body.weights[1].question_topic).toEqual('medicine');
+            expect(res.body.weights[1].count).toEqual(105);
+            return done();
+        }catch(err){
+            return done(err);
+        }
+    });
+});
 
