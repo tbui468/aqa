@@ -36,7 +36,7 @@ describe('/users/:id GET - checking topic weights', () => {
             expect(res.status).toEqual(200);
 
             expect(res.body.weights.length).toEqual(1);
-            expect(res.body.weights[0].question_topic).toEqual('history');
+            expect(res.body.weights[0].question_topic).toEqual('Law and Government');
             expect(res.body.weights[0].count).toEqual(104);
             return done();
         }catch(err){
@@ -52,10 +52,10 @@ describe('/users/:id GET - checking topic weights', () => {
             expect(res.status).toEqual(200);
 
             expect(res.body.weights.length).toEqual(2);
-            expect(res.body.weights[0].question_topic).toEqual('history');
-            expect(res.body.weights[0].count).toEqual(101);
-            expect(res.body.weights[1].question_topic).toEqual('medicine');
-            expect(res.body.weights[1].count).toEqual(105);
+            expect(res.body.weights[0].question_topic).toEqual('Medicine and Healthcare');
+            expect(res.body.weights[0].count).toEqual(105);
+            expect(res.body.weights[1].question_topic).toEqual('Law and Government');
+            expect(res.body.weights[1].count).toEqual(101);
             return done();
         }catch(err){
             return done(err);

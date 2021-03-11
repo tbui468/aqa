@@ -19,17 +19,17 @@ INSERT INTO users (user_name, user_email, user_password) VALUES ('Janice', 'Jann
 /* add dummy question data - note: only Abel asked question for simplicity*/
 /* for now, manually assign each question a topic: medicine, business or history */
 INSERT INTO questions (question_text, question_topic, question_date, question_user) 
-              VALUES ('How lethal is covid-19?', 'medicine', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+              VALUES ('How lethal is covid-19?', 'Medicine and Healthcare', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 INSERT INTO questions (question_text, question_topic, question_date, question_user) 
-              VALUES ('Was Genghis Khan a a serial killer?', 'history', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+              VALUES ('Was Genghis Khan a good government leader?', 'Law and Government', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 
 /* Three questions to test weights of Bob and Catherine */
 INSERT INTO questions (question_text, question_topic, question_date, question_user) 
-              VALUES ('This is a medical question', 'medicine', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+              VALUES ('This is a medical question', 'Medicine and Healthcare', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 INSERT INTO questions (question_text, question_topic, question_date, question_user) 
-              VALUES ('This is a history question', 'history', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+              VALUES ('This is a law/governmetn question', 'Law and Government', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 INSERT INTO questions (question_text, question_topic, question_date, question_user) 
-              VALUES ('This is a business question', 'business', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+              VALUES ('This is a business question', 'Business and Administration', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 
 /* add dummy answer data - Bob's answers */
 INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 
@@ -41,7 +41,7 @@ INSERT INTO answers (answer_text, answer_date, answer_user, answer_question)
 INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 
           VALUES ('Worst than regular flu, but not as bad as 1918 one.', current_timestamp, 3, (SELECT question_id FROM questions WHERE question_id=1));
 INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 
-          VALUES ('He was.  And a rapist', current_timestamp, 3, (SELECT question_id FROM questions WHERE question_id=2));
+          VALUES ('No, he was a terrible leader.  And a rapist', current_timestamp, 3, (SELECT question_id FROM questions WHERE question_id=2));
 
 /* Grant and Heather's answers to weight testing questions: Bob and Catherine will vote on these */
 INSERT INTO answers (answer_text, answer_date, answer_user, answer_question) 

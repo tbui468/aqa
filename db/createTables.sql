@@ -2,6 +2,9 @@ DROP TABLE IF EXISTS votes;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS topic;
+
+CREATE TYPE topic AS ENUM ('Business and Administration', 'Science and Engineering', 'Information Technology', 'Medicine and Healthcare', 'Education', 'Law and Government');
 
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
@@ -13,7 +16,7 @@ CREATE TABLE users(
 CREATE TABLE questions(
     question_id SERIAL PRIMARY KEY,
     question_text TEXT,
-    question_topic TEXT,
+    question_topic topic,
     question_date DATE,
     question_user INTEGER REFERENCES users (user_id)
 );
