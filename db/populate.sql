@@ -11,6 +11,10 @@ INSERT INTO users (user_name, user_email, user_password) VALUES ('Fortraine', 'F
 INSERT INTO users (user_name, user_email, user_password) VALUES ('Grant', 'Granty@animal.com', 'password2'); /* Answerer 3 for Bob and Catherine to vote on */
 INSERT INTO users (user_name, user_email, user_password) VALUES ('Heather', 'Heathen@animal.com', 'password2'); /* Answerer 4 for Bob and Catherine to vote on */
 
+/* More dummy users for voting */
+INSERT INTO users (user_name, user_email, user_password) VALUES ('Ingrid', 'Ingy@animal.com', 'password2');
+INSERT INTO users (user_name, user_email, user_password) VALUES ('Janice', 'Jannnnice@animal.com', 'password2');
+
 
 /* add dummy question data - note: only Abel asked question for simplicity*/
 /* for now, manually assign each question a topic: medicine, business or history */
@@ -75,20 +79,24 @@ INSERT INTO answers (answer_text, answer_date, answer_user, answer_question)
 /* answer 1 and 2 are Bob's (medical and history), 3 and 4 are Catherine's (medical and history) */
 /* everyone votes for Catherines medical answer */
 /* two votes for Bob's history answer, and 1 for Catherine's history answer */
-/* Catherine has 103 medical, 101 history, 100 business.  Bob has 100 medical, 102 history, 100 business */
+/* Catherine has 105 medical, 101 history, 100 business.  Bob has 100 medical, 104 history, 100 business */
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Darcie'), 3); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Darcie'), 2); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Eugene'), 3); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Eugene'), 2); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Fortraine'), 3); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Fortraine'), 4); 
+INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Ingrid'), 3); 
+INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Ingrid'), 2); 
+INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Janice'), 3); 
+INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Janice'), 2); 
 
 /* Add dummy votes for Bob and Catherine to test the weighted vote system */
 /* 5, 7, 9 are Grant's answers to medical, history and business.  6, 8, 10 are Heather's answers to medical, history, and business */
-/* Medical: Grant's answer should have 100/203, and Heather's answer 103/203*/
+/* Medical: Grant's answer should have 100/205, and Heather's answer 105/205*/
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Bob'), 5); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Catherine'), 6);
-/* History:  Grant's answer should have 102/203 and Heather's answer 101/203 */
+/* History:  Grant's answer should have 104/205 and Heather's answer 101/205 */
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Bob'), 7); 
 INSERT INTO votes (vote_date, vote_user, vote_answer) VALUES (current_timestamp, (SELECT user_id FROM users WHERE user_name='Catherine'), 8);
 /* History:  Grant's answer should have 100/200 and Heather's answer 100/200 */

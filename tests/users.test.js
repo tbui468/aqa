@@ -19,7 +19,7 @@ describe('/users GET', () => {
                 .get('/users')
                 .set('Accept', 'application/json');
             expect(res.status).toEqual(200);
-            expect(res.body.length).toEqual(3);
+            expect(res.body.length).toEqual(10);
             return done();
         }catch(err){
             return done(err);
