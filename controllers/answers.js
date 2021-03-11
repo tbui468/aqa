@@ -72,7 +72,8 @@ exports.answer_delete = async function(req, res, next) {
 };
 
 const answer_compute_weight = async function(answer_id) {
-    let weight = 0;
+    const BASE_WEIGHT = 100;
+    let weight = BASE_WEIGHT;
     try{
         const client = await db.getClient(); //get topic
 
@@ -95,8 +96,7 @@ const answer_compute_weight = async function(answer_id) {
             for(let i = 0; i < result1.rows.length; i++) {
                 const weights = await user_compute_weights(result1.rows[i].user_id); 
                 for(let j = 0; j < weights.length; j++) {
-                    if(topic === weights[j].question_topic) weight += parseFloat(weights[j].count);
-                    else weight += 100;
+                    if(topic === weights[j].question_topic) weight = parseFloat(weights[j].count);
                 }
             }
         }catch(err){

@@ -108,6 +108,7 @@ exports.user_delete = async function(req, res, next) {
 
 
 const user_compute_weights = async function(user_id) {
+    const BASE_WEIGHT = 100;
     try{
         const queryText = `
             SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
@@ -119,7 +120,7 @@ const user_compute_weights = async function(user_id) {
         const result = await db.query(queryText, [user_id]); 
 
         for(let i = 0; i < result.rows.length; i++) {
-            result.rows[i].count = parseFloat(result.rows[i].count) + 100;
+            result.rows[i].count = parseFloat(result.rows[i].count) + BASE_WEIGHT;
         }
 
         return result.rows;
