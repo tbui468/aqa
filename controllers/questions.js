@@ -108,6 +108,7 @@ exports.question_show = async function(req, res, next) {
 
 }
 
+//sum of all answers weights
 const question_compute_answers_weight = async function(question_id) {
     let weight = 0;
     try{
