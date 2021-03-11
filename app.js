@@ -6,7 +6,7 @@ const session = require('express-session'); //could replace with this with own m
 const passport = require('passport'); //could replace with with my own middleware (first)
 const bcrypt = require('bcryptjs');
 const LocalStrategy = require('passport-local').Strategy; //could replace this with my own middleware (first)
-const cors = require('cors'); //could replace this with my own middleware (second)
+const cors = require('cors'); //could replace this with my own middleware (second) just need to set headers, right?
 const helmet = require('helmet');
 const compression = require('compression');
 
@@ -23,43 +23,39 @@ const app = express();
 
 // set passport strategy
 passport.use(
-  new LocalStrategy((username, password, done) => {
-    const results = db.query('SELECT * FROM users WHERE user_name=$1;', [
-      username,
-    ]);
-    results
-      .then((result) => {
-        if (result.rows === undefined || result.rows.length === 0) {
-          return done(null, false, { message: 'Username not found' });
+    new LocalStrategy( async (username, password, done) => {
+        try{
+            const result = await db.query('SELECT * FROM users WHERE user_name=$1;', [username,]);
+            if (result.rows === undefined || result.rows.length === 0) {
+                return done(null, false, { message: 'Username not found' });
+            }
+            bcrypt.compare(password, result.rows[0].user_password, (err, res) => {
+                if (res) {
+                    return done(null, result.rows[0], { message: 'User found in DB' });
+                }
+                return done(null, false, { message: 'Incorrect password' });
+            });
+        }catch(err){
+            done(err, null, { message: 'Error connecting to database' })
         }
-        bcrypt.compare(password, result.rows[0].user_password, (err, res) => {
-          if (res) {
-            return done(null, result.rows[0], { message: 'User found in DB' });
-          }
-          return done(null, false, { message: 'Incorrect password' });
-        });
-      })
-      .catch((err) => done(err, null, { message: 'Error connecting to database' }));
-  }),
+    }),
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.user_id);
+    done(null, user.user_id);
 });
 
-
-passport.deserializeUser((id, done) => {
-  const results = db.query("SELECT * FROM users WHERE user_id=$1;", [id]);
-  results
-  .then((result) => {
-    if(result.rows === undefined || result.rows.length === 0) {
-      done(null, false);
-    }else{
-      done(null, result.rows[0]);
+passport.deserializeUser(async (id, done) => {
+    try{
+        const result = await db.query("SELECT * FROM users WHERE user_id=$1;", [id]);
+        if(result.rows === undefined || result.rows.length === 0) {
+            done(null, false);
+        }else{
+            done(null, result.rows[0]);
+        }
+    }catch(err){
+        done(err);
     }
-  }).catch((err) => {
-    done(err);
-  });
 });
 
 const corsOptions = {
