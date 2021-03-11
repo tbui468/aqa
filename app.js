@@ -5,7 +5,6 @@ const express = require('express');
 const session = require('express-session'); //could replace with this with own middleware (third)
 const passport = require('passport'); //could replace with with my own middleware (first)
 const bcrypt = require('bcryptjs');
-//const jwt = require('jsonwebtoken');
 const LocalStrategy = require('passport-local').Strategy; //could replace this with my own middleware (first)
 const cors = require('cors'); //could replace this with my own middleware (second)
 const helmet = require('helmet');
@@ -48,6 +47,7 @@ passport.serializeUser((user, done) => {
   done(null, user.user_id);
 });
 
+
 passport.deserializeUser((id, done) => {
   const results = db.query("SELECT * FROM users WHERE user_id=$1;", [id]);
   results
@@ -63,10 +63,10 @@ passport.deserializeUser((id, done) => {
 });
 
 const corsOptions = {
-  // origin: 'https://vigorous-kare-2dfaa2.netlify.app',
-  origin: 'http://localhost:8080',
-  credentials: true,
-  optionsSuccessStatus: 200,
+    // origin: 'https://vigorous-kare-2dfaa2.netlify.app',
+    origin: 'http://localhost:8080',
+    credentials: true,
+    optionsSuccessStatus: 200,
 };
 
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
@@ -79,8 +79,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
+    res.locals.currentUser = req.user;
+    next();
 });
 
 // routes
@@ -91,12 +91,12 @@ app.use('/questions', answersRouter);
 
 
 app.get('/profile', (req, res, next) => {
-  if(!req.user) {
-    return res.status(404).json({ message: "Log in to access the profile page" });
-  }else{
-   // res.redirect('/users/' + req.user.user_id);
-    return res.status(200).json(req.user);
-  }
+    if(!req.user) {
+        return res.status(404).json({ message: "Log in to access the profile page" });
+    }else{
+        // res.redirect('/users/' + req.user.user_id);
+        return res.status(200).json(req.user);
+    }
 });
 
 app.post('/login', [passport.authenticate('local'), 
@@ -107,16 +107,16 @@ app.post('/login', [passport.authenticate('local'),
 
 //@temp: move to separate router/controller files
 app.get('/logout', (req, res) => {
-  req.logout();
-  return res.status(200).json({ message: "Successfully logged out" });
+    req.logout();
+    return res.status(200).json({ message: "Successfully logged out" });
 });
 
 // handle errors
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('shit broke');
+    console.error(err.stack);
+    res.status(500).send('shit broke');
 });
 
 app.listen(port, () => {
-  console.log(`App is listening on port: ${port}`);
+    console.log(`App is listening on port: ${port}`);
 });

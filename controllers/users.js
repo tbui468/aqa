@@ -55,17 +55,17 @@ exports.user_show = async function(req, res, next) {
 }
 
 //return json of current information to populate view (not weight or password)
-exports.user_edit = function(req, res, next) {
-    let promise = db.query('SELECT * FROM users WHERE user_id=$1;', [req.params.id]);
-    promise.then(function(result) {
+exports.user_edit = async function(req, res, next) {
+    try{
+        const result = await db.query('SELECT * FROM users WHERE user_id=$1;', [req.params.id]);
         let obj = {
             name: result.rows[0].user_name,
             email: result.rows[0].user_email
         }
         return res.status(200).json(obj);
-    }).catch(function(err) {
+    }catch(err){
         return next(err);
-    });
+    }
 }
 
 //update data in db (don't allow updating passwords for now)
@@ -76,17 +76,17 @@ exports.user_update = [
     body('name', 'Name must be specified').trim().isLength({min: 1, max: 30}).escape(),
     body('email', 'Email must be specified').trim().isLength({min: 1, max: 30}).escape(),
 
-    (req, res, next) => {
+    async (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
             return res.status(500).json({ name: req.body.name, email: req.body.email });
         }else{
-            let promise = db.query('UPDATE users SET user_name=$1, user_email=$2 WHERE user_id=$3;', [req.body.name, req.body.email, req.params.id]);
-            promise.then(function(result) {
+            try{
+                const result = await db.query('UPDATE users SET user_name=$1, user_email=$2 WHERE user_id=$3;', [req.body.name, req.body.email, req.params.id]);
                 return res.status(200).json({message: 'user updated'}); 
-            }).catch(function(err) {
+            }catch(err){
                 return next(err);
-            });
+            }
         }
     }
 ]
@@ -97,7 +97,7 @@ exports.user_update = [
 exports.user_delete = async function(req, res, next) {
     try{
         const queryText = `
-            DELETE FROM users WHERE user_id=$1;
+        DELETE FROM users WHERE user_id=$1;
         `;
         const result = await db.query(queryText, [req.params.id]);
         return res.status(200).json({message: 'user deleted' });
@@ -111,11 +111,11 @@ const user_compute_weights = async function(user_id) {
     const BASE_WEIGHT = 100;
     try{
         const queryText = `
-            SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
-            INNER JOIN answers ON votes.vote_answer=answers.answer_id
-            INNER JOIN questions ON answers.answer_question=questions.question_id
-            WHERE answers.answer_user=$1
-            GROUP BY questions.question_topic;
+        SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
+        INNER JOIN answers ON votes.vote_answer=answers.answer_id
+        INNER JOIN questions ON answers.answer_question=questions.question_id
+        WHERE answers.answer_user=$1
+        GROUP BY questions.question_topic;
         `;
         const result = await db.query(queryText, [user_id]); 
 
