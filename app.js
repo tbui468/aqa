@@ -6,7 +6,6 @@ const session = require('express-session'); //could replace with this with own m
 const passport = require('passport'); //could replace with with my own middleware (first)
 const bcrypt = require('bcryptjs');
 const LocalStrategy = require('passport-local').Strategy; //could replace this with my own middleware (first)
-const cors = require('cors'); //could replace this with my own middleware (second) just need to set headers, right?
 const helmet = require('helmet');
 const compression = require('compression');
 
@@ -22,7 +21,7 @@ const port = process.env.PORT;
 const app = express();
 
 // set passport strategy
-passport.use(
+passport.use('my-strategy',
     new LocalStrategy( async (username, password, done) => {
         try{
             const result = await db.query('SELECT * FROM users WHERE user_name=$1;', [username,]);
@@ -58,19 +57,21 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-const corsOptions = {
-    // origin: 'https://vigorous-kare-2dfaa2.netlify.app',
-    origin: 'http://localhost:8080',
-    credentials: true,
-    optionsSuccessStatus: 200,
-};
+const cors = (req, res, next) => {
+    res.set({
+        'Access-Control-Allow-Origin': 'http://localhost:8080',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Headers': 'Content-Type'
+    });
+    next();
+}
 
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(compression());
 app.use(helmet());
-app.use(cors(corsOptions));
+app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -81,8 +82,8 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter); //users/:user_id/answers - all answers belonging to user.  include /:answer_id to get specific question
-app.use('/questions', questionsRouter); //questions/:question_id/answers - all answers belonging to question.  Include /:answer_id to get specific answer
+app.use('/users', usersRouter);
+app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
 
 
@@ -90,18 +91,16 @@ app.get('/profile', (req, res, next) => {
     if(!req.user) {
         return res.status(404).json({ message: "Log in to access the profile page" });
     }else{
-        // res.redirect('/users/' + req.user.user_id);
         return res.status(200).json(req.user);
     }
 });
 
-app.post('/login', [passport.authenticate('local'), 
+app.post('/login', [passport.authenticate('my-strategy'), 
     (req, res, next) => {
         return res.status(200).json({message: "Successfully logged in"});
     }
 ]);
 
-//@temp: move to separate router/controller files
 app.get('/logout', (req, res) => {
     req.logout();
     return res.status(200).json({ message: "Successfully logged out" });
