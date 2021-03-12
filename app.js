@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy; //could replace this w
 const helmet = require('helmet');
 const compression = require('compression');
 
-require('dotenv').config();
+require('dotenv').config(); //replace with my own stuff
 
 const db = require('./db/index');
 const indexRouter = require('./routes/index');
@@ -75,17 +75,17 @@ app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+/*
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     next();
-});
+});*/
 
 // routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
-
 
 app.get('/profile', (req, res, next) => {
     if(!req.user) {

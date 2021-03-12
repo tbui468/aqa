@@ -129,4 +129,30 @@ const user_compute_weights = async function(user_id) {
     }
 }
 
+exports.user_questions_index = async function(req, res, next) {
+    try{
+        const queryText = `
+            SELECT * FROM questions
+            WHERE questions.question_user=$1;
+        `;
+        const result = await db.query(queryText, [req.params.user_id]);
+        return res.json(result.rows);
+    }catch(err){
+        next(err);
+    }
+}
+
+exports.user_answers_index = async function(req, res, next) {
+    try{
+        const queryText = `
+            SELECT * FROM answers
+            WHERE answers.answer_user=$1;
+        `;
+        const result = await db.query(queryText, [req.params.user_id]);
+        return res.json(result.rows);
+    }catch(err){
+        next(err);
+    }
+}
+
 module.exports.user_compute_weights = user_compute_weights;

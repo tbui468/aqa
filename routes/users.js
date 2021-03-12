@@ -20,4 +20,9 @@ router.get('/:id/edit', [authorizationsController.logged_in, authorizationsContr
 router.put('/:id', [authorizationsController.logged_in, authorizationsController.owns_profile, usersController.user_update]);
 router.delete('/:id', [authorizationsController.logged_in, authorizationsController.owns_profile, usersController.user_delete]);
 
+
+//these routes should be protected since only logged in users should be able to see their own questions/answers
+router.get('/:user_id/questions', usersController.user_questions_index);
+router.get('/:user_id/answers', usersController.user_answers_index);
+
 module.exports = router;
