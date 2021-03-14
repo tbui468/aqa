@@ -70,13 +70,17 @@ exports.question_show = async function(req, res, next) {
                 throw err;
             });
 
+        const user = req.user ? req.user.user_id : -1;
+
         const answerQuery = `
-            SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id
-            FROM answers INNER JOIN users ON answers.answer_user=users.user_id WHERE answers.answer_question=$1
+            SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id, votes.vote_id FROM answers
+            INNER JOIN users ON answers.answer_user=users.user_id
+            LEFT JOIN votes ON votes.vote_user=$2
+            WHERE answers.answer_question=$1
             ORDER BY answers.answer_date DESC;
         `;
 
-        const p1 = await client.query(answerQuery, [req.params.id])
+        const p1 = await client.query(answerQuery, [req.params.id, user])
             .catch((err) => {
                 client.release();
                 throw err;

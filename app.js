@@ -16,6 +16,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const questionsRouter = require('./routes/questions');
 const answersRouter = require('./routes/answers');
+const votesRouter = require('./routes/votes');
 
 const port = process.env.PORT;
 const app = express();
@@ -61,7 +62,8 @@ const cors = (req, res, next) => {
     res.set({
         'Access-Control-Allow-Origin': 'http://localhost:8080',
         'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'Content-Type'
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, PUT'
     });
     next();
 }
@@ -86,6 +88,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
+app.use('/votes', votesRouter);
 
 app.get('/profile', (req, res, next) => {
     if(!req.user) {

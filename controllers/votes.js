@@ -1,5 +1,19 @@
 const db = require('./../db/index');
 
+//get all votes
+exports.vote_index = async function(req, res, next) {
+    try{
+        const queryText = `
+            SELECT * FROM votes ORDER BY vote_id ASC;
+        `;
+        const result = await db.query(queryText, []);
+        return res.status(200).json(result.rows);
+    }catch(err){
+        return next(err);
+    }
+};
+
+//get all votes for a given answer
 exports.vote_list = async function(req, res, next) {
     try{
         const queryText = `
@@ -31,45 +45,33 @@ exports.vote_delete = async function(req, res, next) {
 }
 
 exports.vote_create = async function(req, res, next) {
-
     try{
+
         const client = await db.getClient();
 
-        //check if user has already voted, and update vote if so
-        const queryText0 = `
-            SELECT * FROM votes 
-            WHERE vote_user=$1 AND vote_answer=$2;
-        `;
-        const votedResult = await client.query(queryText0, [req.user.user_id, req.params.answer_id])
-            .catch((err) => {
-                client.release();
-                throw err;
-            });
-
-        if(votedResult.rows.length > 0) { //update previous vote
-            const queryText1 = `
-                UPDATE votes
-                SET vote_answer=$1, vote_date=current_timestamp, vote_user=$2
-                WHERE vote_user=$2
+        try{
+            await client.query('BEGIN');
+            //do stuff here in transaction
+            const queryDelete = `
+                DELETE FROM votes
+                WHERE votes.vote_answer
+                IN (SELECT answers.answer_id FROM answers WHERE votes.vote_user=$1 AND answers.answer_question=$2);
             `;
-            const updateResult = await client.query(queryText1, [req.params.answer_id, req.user.user_id])
-                .catch((err) => {
-                    client.release();
-                    throw err;
-                });
-        }else{ //add new vote
+
+            await db.query(queryDelete, [req.user.user_id, req.params.question_id]); //NEED TO DELETE ALLL VOTES THAT BELONG TO QUESTION, NOT ANSWER (since there shouldn't be more than one)
+
             const queryText2 = `
                 INSERT INTO votes (vote_date, vote_user, vote_answer)
                 VALUES (current_timestamp, $1, $2);
             `;
-            const addResult = await client.query(queryText2, [req.user.user_id, req.params.answer_id])
-                .catch((err) => {
-                    client.release();
-                    throw err;
-                });
+            await db.query(queryText2, [req.user.user_id, req.params.answer_id]);
+            await client.query('COMMIT');
+            client.release();
+        }catch(err){
+            await client.query('ROLLBACK');
+            client.release();
+            throw err;
         }
-
-        client.release();
 
         return res.status(200).json({ message: "Voted for answer" });
     }catch(err){
@@ -77,4 +79,3 @@ exports.vote_create = async function(req, res, next) {
     }
 
 };
-

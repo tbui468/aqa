@@ -97,7 +97,7 @@ exports.user_update = [
 exports.user_delete = async function(req, res, next) {
     try{
         const queryText = `
-        DELETE FROM users WHERE user_id=$1;
+            DELETE FROM users WHERE user_id=$1;
         `;
         const result = await db.query(queryText, [req.params.id]);
         return res.status(200).json({message: 'user deleted' });

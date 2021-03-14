@@ -52,7 +52,7 @@ describe('/questions/:id GET', () => {
             expect(res.status).toEqual(200);
             expect(res.body.question.user_name).toEqual('Abel');
             expect(res.body.answers.length).toEqual(2);
-            expect(res.body.answers[0].answer_percent).toBeLessThan(res.body.answers[1].answer_percent);
+            expect(res.body.answers[1].answer_percent).toBeLessThan(res.body.answers[0].answer_percent);
             return done();
         }catch(err){
             return done(err);
@@ -66,7 +66,7 @@ describe('/questions/:id GET', () => {
             expect(res.status).toEqual(200);
             expect(res.body.question.user_name).toEqual('Abel');
             expect(res.body.answers.length).toEqual(2);
-            expect(res.body.answers[0].answer_percent).toBeGreaterThan(res.body.answers[1].answer_percent);
+            expect(res.body.answers[1].answer_percent).toBeGreaterThan(res.body.answers[0].answer_percent);
             return done();
         }catch(err){
             return done(err);
