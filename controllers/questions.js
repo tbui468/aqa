@@ -54,8 +54,8 @@ exports.question_delete = async function(req, res, next) {
     }
 };
 
-exports.question_show = async function(req, res, next) {
 
+exports.question_show = async function(req, res, next) {
     try{
         const client = await db.getClient();
 
@@ -73,7 +73,7 @@ exports.question_show = async function(req, res, next) {
         const user = req.user ? req.user.user_id : -1;
 
         const answerQuery = `
-            SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id, votes.vote_id FROM answers
+            SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id FROM answers
             INNER JOIN users ON answers.answer_user=users.user_id
             LEFT JOIN votes ON votes.vote_user=$2
             WHERE answers.answer_question=$1
@@ -86,7 +86,8 @@ exports.question_show = async function(req, res, next) {
                 throw err;
             });
 
-        const totalWeight = await question_compute_answers_weight(req.params.id);
+        const totalWeight = await question_compute_answers_weight(req.params.id); //100, should be 500
+
 
         //calculate percent here and assign it to object
         let answers = p1.rows;
@@ -117,14 +118,14 @@ exports.question_show = async function(req, res, next) {
 const question_compute_answers_weight = async function(question_id) {
     let weight = 0;
     try{
+        
         const queryText = `
-            SELECT answers.answer_id FROM answers
+            SELECT * FROM answers
             WHERE answers.answer_question=$1;
         `;
         const result = await db.query(queryText, [question_id]);
-        
         for(let i = 0; i < result.rows.length; i++) {
-            const answerWeight = await answer_compute_weight(result.rows[i].answer_id);
+            const answerWeight = await answer_compute_weight(result.rows[i].answer_id); 
             weight += parseFloat(answerWeight);
         }
     }catch(err){

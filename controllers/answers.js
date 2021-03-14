@@ -71,45 +71,46 @@ exports.answer_delete = async function(req, res, next) {
     }
 };
 
+//answer weight should be equal the the weights of the users who voted for the answer
 const answer_compute_weight = async function(answer_id) {
-    const BASE_WEIGHT = 100;
-    let weight = BASE_WEIGHT;
+    let weight = 0;
     try{
-        const client = await db.getClient(); //get topic
 
-        //get topic
-        try{
-            const queryText0 = `
-                SELECT questions.question_topic FROM answers
-                INNER JOIN questions ON answers.answer_question=questions.question_id
-                WHERE answers.answer_id=$1;
-            `;
-            const result0 = await client.query(queryText0, [answer_id]);
-            const topic = result0.rows[0].question_topic;
+        const queryText0 = `
+            SELECT questions.question_topic FROM answers
+            INNER JOIN questions ON answers.answer_question=questions.question_id
+            WHERE answers.answer_id=$1;
+        `;
+        const result0 = await db.query(queryText0, [answer_id]);
+        const topic = result0.rows[0].question_topic;
 
-            const queryText1 = `
-                SELECT users.user_id FROM votes
-                INNER JOIN users ON votes.vote_user=users.user_id
-                WHERE votes.vote_answer=$1;
-            `;
-            const result1 = await client.query(queryText1, [answer_id]);
-            for(let i = 0; i < result1.rows.length; i++) {
-                const weights = await user_compute_weights(result1.rows[i].user_id); 
-                for(let j = 0; j < weights.length; j++) {
-                    if(topic === weights[j].question_topic) weight = parseFloat(weights[j].count);
+        const queryText1 = `
+            SELECT * FROM votes
+            WHERE votes.vote_answer=$1;
+        `;
+        const result1 = await db.query(queryText1, [answer_id]); //find all votes for this answer (one should be catherine, and the other bob)
+        
+        for(let i = 0; i < result1.rows.length; i++) {
+            const weights = await user_compute_weights(result1.rows[i].vote_user); 
+            console.log(weights);
+            let found = false;
+            for(let j = 0; j < weights.length; j++) {
+                if(topic === weights[j].question_topic) {
+                    weight += parseFloat(weights[j].count);
+                    found = true;
                 }
             }
-        }catch(err){
-            client.release();
-            throw err;
+            if(!found){ //use default if topic weight was not found
+                weight += 100;
+            }
         }
 
-        client.release();
     }catch(err){
         throw err;
     }
     return weight;
 }
+
 
 module.exports.answer_compute_weight = answer_compute_weight;
 

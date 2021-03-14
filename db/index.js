@@ -30,7 +30,7 @@ module.exports = {
             const results = await pool.query(text, params);
             const duration = Date.now() - start;
             const rowCount = results ? results.rowCount : 'none';
-            debug('executed query', { text: text, params: params, duration: duration + ' ms', rows: rowCount });
+//            debug('executed query', { text: text, params: params, duration: duration + ' ms', rows: rowCount });
             return results;
         }catch(e) {
             throw e;

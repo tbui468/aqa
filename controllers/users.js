@@ -106,16 +106,16 @@ exports.user_delete = async function(req, res, next) {
     }
 }
 
-
+//return array of topic: weight
 const user_compute_weights = async function(user_id) {
     const BASE_WEIGHT = 100;
     try{
         const queryText = `
-        SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
-        INNER JOIN answers ON votes.vote_answer=answers.answer_id
-        INNER JOIN questions ON answers.answer_question=questions.question_id
-        WHERE answers.answer_user=$1
-        GROUP BY questions.question_topic;
+            SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
+            INNER JOIN answers ON votes.vote_answer=answers.answer_id
+            INNER JOIN questions ON answers.answer_question=questions.question_id
+            WHERE answers.answer_user=$1
+            GROUP BY questions.question_topic;
         `;
         const result = await db.query(queryText, [user_id]); 
 
