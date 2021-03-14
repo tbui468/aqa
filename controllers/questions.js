@@ -8,7 +8,7 @@ exports.question_list = async function(req, res, next) {
         const queryText = `
             SELECT questions.question_id, questions.question_text, questions.question_topic, users.user_name
             FROM questions INNER JOIN users ON questions.question_user=users.user_id
-            ORDER BY questions.question_date ASC;
+            ORDER BY questions.question_date DESC;
         `;
         const result = await db.query(queryText, []);
         return res.status(200).json(result.rows);
@@ -27,10 +27,10 @@ exports.question_create = [
         }else{
             try{
                 const queryText = `
-                    INSERT INTO questions (question_text, question_date, question_user)
-                    VALUES ($1, current_timestamp, $2);
+                    INSERT INTO questions (question_text, question_date, question_user, question_topic)
+                    VALUES ($1, current_timestamp, $2, $3);
                 `;
-                const result = await db.query(queryText, [req.body.text, req.user.user_id]);
+                const result = await db.query(queryText, [req.body.text, req.user.user_id, req.body.topic]);
                 return res.json({ message: "New question posted!" });
             }catch(err){
                 return next(err);
@@ -72,7 +72,8 @@ exports.question_show = async function(req, res, next) {
 
         const answerQuery = `
             SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id
-            FROM answers INNER JOIN users ON answers.answer_user=users.user_id WHERE answers.answer_question=$1;
+            FROM answers INNER JOIN users ON answers.answer_user=users.user_id WHERE answers.answer_question=$1
+            ORDER BY answers.answer_date DESC;
         `;
 
         const p1 = await client.query(answerQuery, [req.params.id])
