@@ -37,8 +37,8 @@ describe('/questions/:id GET', () => {
             expect(res.status).toEqual(200);
             expect(res.body.question.user_name).toEqual('Abel');
             expect(res.body.answers.length).toEqual(2);
-            expect(res.body.answers[0].answer_percent).toEqual(0.5);
-            expect(res.body.answers[1].answer_percent).toEqual(0.5);
+            expect(res.body.answers[0].answer_percent).toEqual(1.0);
+            expect(res.body.answers[1].answer_percent).toEqual(0.0);
             return done();
         }catch(err){
             return done(err);

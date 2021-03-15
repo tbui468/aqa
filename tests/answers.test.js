@@ -20,7 +20,7 @@ describe('show answers equal weight', () => {
                 .get('/questions/1/answers/1')
                 .set('Accept', 'application/json');
             expect(res.status).toEqual(200);
-            expect(res.body.weight).toEqual(100);
+            expect(res.body.weight).toEqual(0);
             return done();
         }catch(err){
             return done(err);
@@ -32,7 +32,7 @@ describe('show answers equal weight', () => {
                 .get('/questions/1/answers/3')
                 .set('Accept', 'application/json');
             expect(res.status).toEqual(200);
-            expect(res.body.weight).toEqual(100);
+            expect(res.body.weight).toEqual(500);
             return done();
         }catch(err){
             return done(err);

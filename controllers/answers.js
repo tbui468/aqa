@@ -92,7 +92,6 @@ const answer_compute_weight = async function(answer_id) {
         
         for(let i = 0; i < result1.rows.length; i++) {
             const weights = await user_compute_weights(result1.rows[i].vote_user); 
-            console.log(weights);
             let found = false;
             for(let j = 0; j < weights.length; j++) {
                 if(topic === weights[j].question_topic) {
