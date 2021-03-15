@@ -1,6 +1,6 @@
 const db = require('./../db/index');
 const { body, validationResult } = require('express-validator');
-const { answer_compute_weight } = require('./answers');
+const { answer_compute_weight, answer_voted_for } = require('./answers');
 
 
 exports.question_list = async function(req, res, next) {
@@ -70,23 +70,22 @@ exports.question_show = async function(req, res, next) {
                 throw err;
             });
 
-        const user = req.user ? req.user.user_id : -1;
+        const user = req.user ? req.user.user_id : -1; //logged in user
 
         const answerQuery = `
-            SELECT answers.answer_text, users.user_name, answers.answer_date, answers.answer_id FROM answers
+            SELECT answers.answer_text, answers.answer_date, answers.answer_id, users.user_name FROM answers
             INNER JOIN users ON answers.answer_user=users.user_id
-            LEFT JOIN votes ON votes.vote_user=$2
             WHERE answers.answer_question=$1
             ORDER BY answers.answer_date DESC;
         `;
 
-        const p1 = await client.query(answerQuery, [req.params.id, user])
+        const p1 = await client.query(answerQuery, [req.params.id])
             .catch((err) => {
                 client.release();
                 throw err;
             });
 
-        const totalWeight = await question_compute_answers_weight(req.params.id); //100, should be 500
+        const totalWeight = await question_compute_answers_weight(req.params.id);
 
 
         //calculate percent here and assign it to object
@@ -95,6 +94,7 @@ exports.question_show = async function(req, res, next) {
         for(let i = 0; i < answers.length; i++) {
             const weight = await answer_compute_weight(answers[i].answer_id);
             answers[i].answer_percent = weight / totalWeight;
+            answers[i].voted = await answer_voted_for(user, answers[i].answer_id);
         }
 
         let obj = {

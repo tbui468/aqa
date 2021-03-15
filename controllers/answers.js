@@ -26,9 +26,9 @@ exports.answer_show = async function(req, res, next) {
             WHERE answers.answer_question=$1 AND answers.answer_id=$2;
         `;
         const result = await db.query(queryText, [req.params.question_id, req.params.answer_id]);
-        const weight = await answer_compute_weight(req.params.answer_id); //temp
+        const weight = await answer_compute_weight(req.params.answer_id);
         const obj = {
-            weight: weight,
+            percent: weight,
             answer: result.rows[0]
         }
         return res.status(200).json(obj);
@@ -108,6 +108,16 @@ const answer_compute_weight = async function(answer_id) {
         throw err;
     }
     return weight;
+}
+
+exports.answer_voted_for = async function(user_id, answer_id) {
+    const queryText = `
+        SELECT * FROM votes
+        WHERE votes.vote_user=$1 AND votes.vote_answer=$2;
+    `;
+    const result = await db.query(queryText, [user_id, answer_id]);
+    if(result.rows.length > 0) return true;
+    else return false;
 }
 
 
