@@ -6,7 +6,7 @@ const { answer_compute_weight, answer_voted_for } = require('./answers');
 exports.question_list = async function(req, res, next) {
     try{
         const queryText = `
-            SELECT questions.question_id, questions.question_text, questions.question_topic, users.user_name
+            SELECT questions.question_id, questions.question_text, questions.question_topic, users.user_name, questions.question_date
             FROM questions INNER JOIN users ON questions.question_user=users.user_id
             ORDER BY questions.question_date DESC;
         `;
