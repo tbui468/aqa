@@ -64,7 +64,7 @@ exports.answer_delete = async function(req, res, next) {
             DELETE FROM answers
             WHERE answers.answer_question=$1 AND answers.answer_id=$2;
         `;
-        const result = await db.query(queryText, [req.params.question_id, req.params.answer_id]);
+        await db.query(queryText, [req.params.question_id, req.params.answer_id]);
         return res.status(200).json({ message: "Answer removed from database" });
     }catch(err){
         return next(err);
