@@ -42,7 +42,31 @@ exports.vote_delete = async function(req, res, next) {
     }catch(err){
         return next(err);
     }
+};
+/*
+exports.vote_delete = async function(req, res, next) {
+
 }
+
+exports.vote_create = async function(req, res, next) {
+
+}
+
+class VoteService(req, res, next) {
+    //make these functions the public interface
+    async vote(req, res, next) {
+
+    }
+
+    async delete_vote(req, res, next) {
+
+    }
+
+    //make the REST private???
+}
+exports.voteService_vote = async function(req, res, next) {
+
+}*/
 
 exports.vote_create = async function(req, res, next) {
     //if user tries to vote for own answer, return error
