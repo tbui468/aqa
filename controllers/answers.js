@@ -40,15 +40,25 @@ exports.answer_show = async function(req, res, next) {
 exports.answer_create = [
     body('text', 'Invalid answer').trim().isLength({ min: 1, max: 280 }).escape(),
     async (req, res, next) => {
-        //returns error if user attempts to answer own question
         try{
+            //returns error if user attempts to answer own question
             const queryText = `
                 SELECT * FROM questions
                 WHERE questions.question_id=$1;
             `;
             const result = await db.query(queryText, [req.params.question_id]);
             if(result.rows[0].question_user.toString() === req.user.user_id.toString()) {
-                return res.status(404).json({ message: 'Question askser cannot answer own question!' });
+                return res.status(404).json({ message: 'Question asker cannot answer own question!' });
+            }
+
+            //returns error if user already has answer in database for this question
+            const answerQueryText = `
+                SELECT * FROM answers
+                WHERE answers.answer_user=$1 AND answers.answer_question=$2;
+            `;
+            const answerResult = await db.query(answerQueryText, [req.user.user_id, req.params.question_id]);
+            if(answerResult.rows.length > 0) {
+                return res.status(404).json({ message: 'Cannot answer the same question twice!' });
             }
         }catch(err){
             return next(err);
