@@ -40,6 +40,19 @@ exports.answer_show = async function(req, res, next) {
 exports.answer_create = [
     body('text', 'Invalid answer').trim().isLength({ min: 1, max: 280 }).escape(),
     async (req, res, next) => {
+        //returns error if user attempts to answer own question
+        try{
+            const queryText = `
+                SELECT * FROM questions
+                WHERE questions.question_id=$1;
+            `;
+            const result = await db.query(queryText, [req.params.question_id]);
+            if(result.rows[0].question_user.toString() === req.user.user_id.toString()) {
+                return res.status(404).json({ message: 'Question askser cannot answer own question!' });
+            }
+        }catch(err){
+            return next(err);
+        }
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
            return next(err); 

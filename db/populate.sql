@@ -14,11 +14,10 @@ VALUES
     ('Eugene', 'Eugene@animal.com', 'password2'), /* Voter 2 */
     ('Fortraine', 'Forty@animal.com', 'password2'), /* Voter 3 */
     ('Grant', 'Granty@animal.com', 'password2'), /* Answerer 3 for Bob and Catherine to vote on */
-    ('Heather', 'Heathen@animal.com', 'password2'); /* Answerer 4 for Bob and Catherine to vote on */
-
+    ('Heather', 'Heathen@animal.com', 'password2'), /* Answerer 4 for Bob and Catherine to vote on */
 /* More dummy users for voting */
-INSERT INTO users (user_name, user_email, user_password) VALUES ('Ingrid', 'Ingy@animal.com', 'password2');
-INSERT INTO users (user_name, user_email, user_password) VALUES ('Janice', 'Jannnnice@animal.com', 'password2');
+    ('Ingrid', 'Ingy@animal.com', 'password2'),
+    ('Janice', 'Jannnnice@animal.com', 'password2');
 
 
 /* add dummy question data - note: only Abel asked question for simplicity*/

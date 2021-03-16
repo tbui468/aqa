@@ -60,7 +60,7 @@ exports.question_show = async function(req, res, next) {
         const client = await db.getClient();
 
         const questionQuery = `
-            SELECT questions.question_text, questions.question_topic, users.user_name, questions.question_date
+            SELECT questions.question_text, questions.question_topic, users.user_name, questions.question_date, questions.question_user
             FROM questions INNER JOIN users ON questions.question_user=users.user_id WHERE questions.question_id=$1; 
         `;
 
@@ -97,6 +97,8 @@ exports.question_show = async function(req, res, next) {
             answers[i].voted = await answer_voted_for(user, answers[i].answer_id);
             answers[i].owns = user.toString() === answers[i].answer_user.toString();
         }
+
+        p0.rows[0].owns = user.toString() === p0.rows[0].question_user.toString();
 
         let obj = {
             question: p0.rows[0],
