@@ -45,6 +45,18 @@ exports.vote_delete = async function(req, res, next) {
 }
 
 exports.vote_create = async function(req, res, next) {
+    //if user tries to vote for own answer, return error
+    try{
+        const queryText = `
+            SELECT * FROM answers
+            WHERE answers.answer_id=$1;
+        `;
+        const result = await db.query(queryText, [req.params.answer_id]); //get answer user is trying to vote for
+        if(result.rows[0].answer_user.toString() === req.user.user_id.toString())
+            return res.status(404).json({ message: 'You cannot vote for your own answer!' });
+    }catch(err){
+        return next(err);
+    }
     try{
 
         const client = await db.getClient();

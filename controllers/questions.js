@@ -73,7 +73,7 @@ exports.question_show = async function(req, res, next) {
         const user = req.user ? req.user.user_id : -1; //logged in user
 
         const answerQuery = `
-            SELECT answers.answer_text, answers.answer_date, answers.answer_id, users.user_name FROM answers
+            SELECT answers.answer_user, answers.answer_text, answers.answer_date, answers.answer_id, users.user_name FROM answers
             INNER JOIN users ON answers.answer_user=users.user_id
             WHERE answers.answer_question=$1
             ORDER BY answers.answer_date DESC;
@@ -95,6 +95,7 @@ exports.question_show = async function(req, res, next) {
             const weight = await answer_compute_weight(answers[i].answer_id);
             answers[i].answer_percent = weight / totalWeight;
             answers[i].voted = await answer_voted_for(user, answers[i].answer_id);
+            answers[i].owns = user.toString() === answers[i].answer_user.toString();
         }
 
         let obj = {
