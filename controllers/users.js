@@ -111,17 +111,13 @@ const user_compute_weights = async function(user_id) {
     const BASE_WEIGHT = 100;
     try{
         const queryText = `
-            SELECT questions.question_topic, COUNT(votes.vote_id) FROM votes
+            SELECT questions.question_topic, COUNT(votes.vote_id) + $2 AS count FROM votes
             INNER JOIN answers ON votes.vote_answer=answers.answer_id
             INNER JOIN questions ON answers.answer_question=questions.question_id
             WHERE answers.answer_user=$1
             GROUP BY questions.question_topic;
         `;
-        const result = await db.query(queryText, [user_id]); 
-
-        for(let i = 0; i < result.rows.length; i++) {
-            result.rows[i].count = parseFloat(result.rows[i].count) + BASE_WEIGHT;
-        }
+        const result = await db.query(queryText, [user_id, BASE_WEIGHT]); 
 
         return result.rows;
     }catch(err){
