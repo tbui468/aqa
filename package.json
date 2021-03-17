@@ -6,6 +6,7 @@
   "scripts": {
     "pretest": "psql -U thomas -c \"\\i ~/Dev/aqa/db/populate.sql;\"",
     "test": "jest --detectOpenHandles",
+    "populate": "psql -U thomas -c \"\\i ~/Dev/aqa/db/populate.sql;\"",
     "devstart": "NODE_ENV=dev DEBUG=user nodemon app.js",
     "start": "node app.js"
   },

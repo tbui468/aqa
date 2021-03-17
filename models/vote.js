@@ -17,6 +17,62 @@ class VoteModel {
         }
     }
 
+    static async find_by_answer(answer_id) {
+        try{
+            const queryText = `
+                SELECT * FROM votes
+                WHERE votes.vote_answer = $1;
+            `;
+
+            const votes = await db.query(queryText, [answer_id]);
+            return votes.rows;
+        }catch(err){
+            throw err;
+        }
+    }
+
+    static async delete_by_id(vote_id) {
+        try{
+            const queryText = `
+                DELETE FROM votes
+                WHERE votes.vote_id = $1;
+            `;
+
+            await db.query(queryText, [vote_id]);
+            return { message: 'Vote deleted' };
+        }catch(err){
+            throw err;
+        }
+    }
+
+    static async delete_by_user(user_id) {
+        try{
+            const queryText = `
+                DELETE FROM votes
+                WHERE votes.vote_user = $1;
+            `;
+
+            await db.query(queryText, [user_id]);
+            return { message: 'Vote(s) deleted' };
+        }catch(err){
+            throw err;
+        }
+    }
+
+    static async delete_by_answer(answer_id) {
+        try{
+            const queryText = `
+                DELETE FROM votes
+                WHERE votes.vote_answer = $1;
+            `;
+
+            await db.query(queryText, [answer_id]);
+            return { message: 'Vote(s) deleted' };
+        }catch(err){
+            throw err;
+        }
+    }
+
     static async delete_by_user_and_question(user_id, question_id) {
         try{
             const queryText = `
