@@ -3,6 +3,8 @@ const questionsController = require('./../controllers/questions');
 const authorizationsController = require('./../controllers/authorizations');
 const QuestionsService = require('./../services/questions');
 
+//@todo: sanitize/validate text and topic before allow user to post
+
 router.get('/', 
     [
         async (req, res, next) => {
@@ -15,7 +17,19 @@ router.get('/',
         }
     ]
 );
-router.post('/', [authorizationsController.logged_in, questionsController.question_create]);
+router.post('/', 
+    [
+        authorizationsController.logged_in,
+        async (req, res, next) => {
+            try{
+                await QuestionsService.post_question(req.body.text, req.body.topic, req.user.user_id);
+                return res.json({ message: 'Question posted' });
+            }catch(err){
+                next(err);
+            }
+        }
+    ]
+);
 router.get('/:id',
     [
         async (req, res, next) => {
