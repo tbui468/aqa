@@ -1,6 +1,7 @@
 const router = require('express').Router();
-const authorizationsController = require('./../controllers/authorizations');
 const UsersService = require('./../services/users');
+const AuthService = require('./../services/auth');
+const ValidationService = require('./../services/validation');
 
 //@todo: validate/sanitize inputs before calling UserServices where input is provided (post and edit)
 //@todo: finish delete route for user (need to complete controller, service and model for Answers/Questions/Votes too)
@@ -20,6 +21,9 @@ router.get('/',
 
 router.post('/', 
     [
+        ValidationService.validate_name,
+        ValidationService.validate_email,
+        ValidationService.validate_password,
         async (req, res, next) => {
             try{
                 await UsersService.signup(req.body.username, req.body.password, req.body.email);
@@ -46,8 +50,8 @@ router.get('/:id',
 
 router.delete('/:id', 
     [
-        authorizationsController.logged_in,
-        authorizationsController.owns_profile,
+        AuthService.logged_in,
+        AuthService.owns_profile,
         async (req, res, next) => {
             try{
                 await UsersService.delete_user(req.params.id);

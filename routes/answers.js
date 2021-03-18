@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const authorizationsController = require('./../controllers/authorizations');
+const AuthService = require('./../services/auth');
 const AnswersService = require('./../services/answers');
 
 //@todo: 'put' route for updating answers
@@ -35,7 +35,7 @@ router.get('/:question_id/answers/:answer_id',
 
 router.post('/:question_id/answers', 
     [
-        authorizationsController.logged_in,
+        AuthService.logged_in,
         async (req, res, next) => {
             try{
                 await AnswersService.post_answer(req.body.text, req.user.user_id, req.params.question_id);
@@ -49,8 +49,8 @@ router.post('/:question_id/answers',
 
 router.delete('/:question_id/answers/:answer_id', 
     [
-        authorizationsController.logged_in,
-        authorizationsController.owns_answer,
+        AuthService.logged_in,
+        //AuthService.owns_answer,
         async (req, res, next) => {
             try{
                 await AnswersService.remove_answer(req.params.answer_id);
@@ -64,7 +64,7 @@ router.delete('/:question_id/answers/:answer_id',
 
 router.post('/:question_id/answers/:answer_id/votes', 
     [
-        authorizationsController.logged_in, 
+        AuthService.logged_in, 
         async (req, res, next) => {
             try{
                 await AnswersService.vote_for_answer(req.user.user_id, req.params.answer_id, req.params.question_id);
@@ -91,8 +91,8 @@ router.get('/:question_id/answers/:answer_id/votes',
 
 router.delete('/:question_id/answers/:answer_id/votes/:vote_id', 
     [
-        authorizationsController.logged_in,
-        authorizationsController.owns_vote,
+        AuthService.logged_in,
+        //AuthService.owns_vote,
         async (req, res, next) => {
             try{
                 await AnswersService.remove_vote(req.params.vote_id);

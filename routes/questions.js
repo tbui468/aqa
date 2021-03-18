@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const authorizationsController = require('./../controllers/authorizations');
+const AuthService = require('./../services/auth');
 const QuestionsService = require('./../services/questions');
 
 //@todo: sanitize/validate text and topic before allow user to post
@@ -18,7 +18,7 @@ router.get('/',
 );
 router.post('/', 
     [
-        authorizationsController.logged_in,
+        AuthService.logged_in,
         async (req, res, next) => {
             try{
                 await QuestionsService.post_question(req.body.text, req.body.topic, req.user.user_id);
@@ -43,8 +43,8 @@ router.get('/:id',
 );
 router.delete('/:id', 
     [
-        authorizationsController.logged_in,
-        authorizationsController.owns_question,
+        AuthService.logged_in,
+        //AuthService.owns_question,
         async (req, res, next) => {
             try{
                 await QuestionsService.delete_question(req.params.id);
