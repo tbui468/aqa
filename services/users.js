@@ -42,6 +42,15 @@ class UsersService {
         }
     }
 
+    static async delete_user(user_id) {
+        try{
+            await UserModel.delete_by_id(user_id);
+            return { message: 'user deleted' };
+        }catch(err){
+            throw err;
+        }
+    }
+
 }
 
 

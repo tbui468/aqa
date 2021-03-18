@@ -46,6 +46,19 @@ class QuestionModel {
         }
     }
 
+    static async delete_by_id(question_id) {
+        try{
+            const queryText = `
+                DELETE FROM questions
+                WHERE questions.question_id = $1;
+            `;
+            await db.query(queryText, [question_id]);
+            return { message: 'Question deleted' };
+        }catch(err){
+            throw err;
+        }
+    }
+
 }
 
 module.exports = QuestionModel;

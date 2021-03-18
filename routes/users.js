@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const usersController = require('./../controllers/users');
 const authorizationsController = require('./../controllers/authorizations');
 const UsersService = require('./../services/users');
 
@@ -45,7 +44,20 @@ router.get('/:id',
     ]
 );
 
-router.delete('/:id', [authorizationsController.logged_in, authorizationsController.owns_profile, usersController.user_delete]);
+router.delete('/:id', 
+    [
+        authorizationsController.logged_in,
+        authorizationsController.owns_profile,
+        async (req, res, next) => {
+            try{
+                await UsersService.delete_user(req.params.id);
+                return res.json({ message: 'user deleted!' });
+            }catch(err){
+                next(err);
+            }
+        }
+    ]
+);
 
 
 module.exports = router;

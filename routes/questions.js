@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const questionsController = require('./../controllers/questions');
 const authorizationsController = require('./../controllers/authorizations');
 const QuestionsService = require('./../services/questions');
 
@@ -42,6 +41,19 @@ router.get('/:id',
         }
     ]
 );
-router.delete('/:id', [authorizationsController.logged_in, authorizationsController.owns_question, questionsController.question_delete]);
+router.delete('/:id', 
+    [
+        authorizationsController.logged_in,
+        authorizationsController.owns_question,
+        async (req, res, next) => {
+            try{
+                await QuestionsService.delete_question(req.params.id);
+                return res.json({ message: 'Question deleted' });
+            }catch(err){
+                next(err);
+            }
+        }
+    ]
+);
 
 module.exports = router;

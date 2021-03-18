@@ -43,6 +43,15 @@ class QuestionsService {
         }
     }
 
+    static async delete_question(question_id) {
+        try{
+            await QuestionModel.delete_by_id(question_id);
+            return { message: 'Question deleted' };
+        }catch(err){
+            throw err;
+        }
+    }
+
 }
 
 

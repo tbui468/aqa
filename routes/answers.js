@@ -1,7 +1,5 @@
 const router = require('express').Router();
 const authorizationsController = require('./../controllers/authorizations');
-const answersController = require('./../controllers/answers');
-const votesController = require('./../controllers/votes');
 const AnswersService = require('./../services/answers');
 
 //@todo: 'put' route for updating answers

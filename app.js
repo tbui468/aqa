@@ -12,11 +12,9 @@ const compression = require('compression');
 require('dotenv').config(); //replace with my own stuff
 
 const db = require('./db/index');
-const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const questionsRouter = require('./routes/questions');
 const answersRouter = require('./routes/answers');
-const votesRouter = require('./routes/votes');
 
 const port = process.env.PORT;
 const app = express();
@@ -84,11 +82,9 @@ app.use((req, res, next) => {
 });*/
 
 // routes
-app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
-app.use('/votes', votesRouter);
 
 app.get('/profile', (req, res, next) => {
     if(!req.user) {
