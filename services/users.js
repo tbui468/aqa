@@ -25,6 +25,8 @@ class UsersService {
     static async show_user(user_id) {
         try{
             const user = await UserModel.find_by_id(user_id);
+            const weights = await UserModel.compute_weights(user_id);
+            user[0].weights = weights;
             return user;
         }catch(err){
             throw err;

@@ -13,13 +13,9 @@ class AnswerService {
 
     static async get_answers_list(question_id) {
         try{
-            const queryText = `
-                SELECT * FROM answers
-                WHERE answers.answer_question = $1;
-            `;
 
-            const result = await db.query(queryText, [question_id]);
-            return result.rows;
+            const answers = await AnswerModel.find_by_question(question_id);
+            return answers;
         }catch(err){
             throw err;
         }
@@ -27,12 +23,8 @@ class AnswerService {
 
     static async get_answer(answer_id) {
         try{
-            const queryText = `
-                SELECT * FROM answers
-                WHERE answers.answer_id = $1;
-            `;
-            const result = await db.query(queryText, [answer_id]);
-            return result.rows;
+            const answer = await AnswerModel.find_by_id(answer_id);
+            return answer;
         }catch(err){
             throw err;
         }
