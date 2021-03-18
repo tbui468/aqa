@@ -3,9 +3,6 @@ const UsersService = require('./../services/users');
 const AuthService = require('./../services/auth');
 const ValidationService = require('./../services/validation');
 
-//@todo: validate/sanitize inputs before calling UserServices where input is provided (post and edit)
-//@todo: finish delete route for user (need to complete controller, service and model for Answers/Questions/Votes too)
-
 router.get('/', 
     [
         async (req, res, next) => {

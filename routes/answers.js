@@ -1,11 +1,7 @@
 const router = require('express').Router();
 const AuthService = require('./../services/auth');
 const AnswersService = require('./../services/answers');
-
-//@todo: 'put' route for updating answers
-//@todo: add compute weight to get :answer_id (need to have UserService done, since we need to compute user weights)
-//@todo: create, and reintegrate input validation/sanitization
-//@todo: redo authorization/logged in controller into a service, then rewrite/cleanup
+const ValidationService = require('./../services/validation');
 
 router.get('/:question_id/answers', 
     [
@@ -36,6 +32,8 @@ router.get('/:question_id/answers/:answer_id',
 router.post('/:question_id/answers', 
     [
         AuthService.logged_in,
+        AuthService.not_own_question,
+        ValidationService.validate_answer,
         async (req, res, next) => {
             try{
                 await AnswersService.post_answer(req.body.text, req.user.user_id, req.params.question_id);
@@ -50,7 +48,7 @@ router.post('/:question_id/answers',
 router.delete('/:question_id/answers/:answer_id', 
     [
         AuthService.logged_in,
-        //AuthService.owns_answer,
+        AuthService.owns_answer,
         async (req, res, next) => {
             try{
                 await AnswersService.remove_answer(req.params.answer_id);
@@ -65,6 +63,7 @@ router.delete('/:question_id/answers/:answer_id',
 router.post('/:question_id/answers/:answer_id/votes', 
     [
         AuthService.logged_in, 
+        AuthService.not_own_answer,
         async (req, res, next) => {
             try{
                 await AnswersService.vote_for_answer(req.user.user_id, req.params.answer_id, req.params.question_id);
@@ -92,7 +91,7 @@ router.get('/:question_id/answers/:answer_id/votes',
 router.delete('/:question_id/answers/:answer_id/votes/:vote_id', 
     [
         AuthService.logged_in,
-        //AuthService.owns_vote,
+        AuthService.owns_vote,
         async (req, res, next) => {
             try{
                 await AnswersService.remove_vote(req.params.vote_id);

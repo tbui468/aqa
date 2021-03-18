@@ -29,6 +29,26 @@ class ValidationService {
         }
     }
 
+    static validate_answer(req, res, next) {
+        let text = req.body.text.trim();
+        if(text.length < 1 || text.length > 500) {
+            return res.status(404).json({ message: 'answer invalid' }); 
+        }else{
+            req.body.text = ValidationService.escape(text);
+            next();
+        }
+    }
+
+    static validate_question(req, res, next) {
+        let text = req.body.text.trim();
+        if(text.length < 1 || text.length > 500) {
+            return res.status(404).json({ message: 'question invalid' }); 
+        }else{
+            req.body.text = ValidationService.escape(text);
+            next();
+        }
+    }
+
     static escape(string) {
         let out = string;
         out = out.replace(/>/g, "&#62;");
