@@ -3,7 +3,6 @@ const AuthService = require('./../services/auth');
 const QuestionsService = require('./../services/questions');
 const ValidationService = require('./../services/validation');
 
-//@todo: sanitize/validate text and topic before allow user to post
 
 router.get('/', 
     [
@@ -17,6 +16,7 @@ router.get('/',
         }
     ]
 );
+
 router.post('/', 
     [
         AuthService.logged_in,
@@ -24,6 +24,7 @@ router.post('/',
         async (req, res, next) => {
             try{
                 await QuestionsService.post_question(req.body.text, req.body.topic, req.user.user_id);
+                //make request to classification model here
                 return res.json({ message: 'Question posted' });
             }catch(err){
                 next(err);
@@ -31,6 +32,7 @@ router.post('/',
         }
     ]
 );
+
 router.get('/:question_id',
     [
         async (req, res, next) => {
@@ -43,6 +45,7 @@ router.get('/:question_id',
         }
     ]
 );
+
 router.delete('/:question_id', 
     [
         AuthService.logged_in,

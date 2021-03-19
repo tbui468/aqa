@@ -1,5 +1,6 @@
 const QuestionModel = require('./../models/question');
 const AnswerModel = require('./../models/answer');
+const VoteModel = require('./../models/vote');
 
 
 class QuestionsService {
@@ -20,6 +21,8 @@ class QuestionsService {
             let question_weight = 0;
             for(let i = 0; i < answers.length; i++) {
                 question_weight += parseFloat(answers[i].answer_weight);
+                const votes = await VoteModel.find_by_answer(answers[i].answer_id);
+                answers[i].answer_votes = votes;
             }
 
             question[0].question_weight = question_weight;
