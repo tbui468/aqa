@@ -11,15 +11,8 @@ class QuestionsService {
             const result = await QuestionModel.create(text, user_id);
             const question_id = result[0].question_id;
 
-            const body = { "text": text };
-            const fetchResult = await fetch('http://localhost:5000/predict', {
-                    method: 'POST',
-                    body: JSON.stringify(body),
-                    headers: {'Content-Type': 'application/json'}
-                });
+            const topic = await QuestionsService.classify_question(text);
 
-            const json = await fetchResult.json();
-            const topic = json.topic;
             console.log(topic);
 
             await QuestionModel.update_topic(question_id, "Education"); //temp: topics return by nn are not part of the enum type yet, so putting in education for default
@@ -27,6 +20,18 @@ class QuestionsService {
         }catch(err){
             throw err;
         }
+    }
+
+    static async classify_question(text) {
+        const body = { "text": text };
+        const fetchResult = await fetch('http://localhost:5000/predict', {
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: {'Content-Type': 'application/json'}
+            });
+
+        const json = await fetchResult.json(); //json() is an asynchronous call (for some reason??), and this doesn't work without 'await'
+        return json.topic;
     }
 
     static async show_detail(question_id) {

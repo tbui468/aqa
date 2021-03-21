@@ -24,7 +24,6 @@ router.post('/',
         async (req, res, next) => {
             try{
                 await QuestionsService.post_question(req.body.text, req.user.user_id);
-                //make request to classification model here
                 return res.json({ message: 'Question posted' });
             }catch(err){
                 next(err);

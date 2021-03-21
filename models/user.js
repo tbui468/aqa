@@ -61,14 +61,21 @@ class UserModel {
     static async compute_weights(user_id) {
         try{
             //default weights
-            const weights = [
-                { question_topic: 'Business and Administration', count: '100' },
-                { question_topic: 'Science and Engineering', count: '100' },
-                { question_topic: 'Information Technology', count: '100' },
-                { question_topic: 'Medicine and Healthcare', count: '100' },
-                { question_topic: 'Education', count: '100' },
-                { question_topic: 'Law and Government', count: '100' }
-            ];
+            const topicQuery = `
+                SELECT to_json(ENUM_RANGE(null::topic));
+            `;
+
+            const result0 = await db.query(topicQuery, []);
+
+            let weights = [];
+
+            for(let i = 0; i < result0.rows[0].to_json.length; i++) {
+                const obj = {
+                    question_topic: result0.rows[0].to_json[i],
+                    count: '100'
+                };
+                weights.push(obj);
+            }
 
             const queryText = `
                 SELECT questions.question_topic, COUNT(*) + 100 AS count FROM votes

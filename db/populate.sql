@@ -25,13 +25,13 @@ VALUES
 INSERT INTO questions
     (question_text, question_topic, question_date, question_user) 
 VALUES
-    ('How lethal is covid-19?', 'Medicine and Healthcare', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
-    ('Was Genghis Khan a good government leader?', 'Law and Government', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('How lethal is covid-19?', 'Science/Tech', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('Was Genghis Khan a good government leader?', 'Business', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
 
 /* Three questions to test weights of Bob and Catherine */
-    ('This is a medical question', 'Medicine and Healthcare', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
-    ('This is a law/governmetn question', 'Law and Government', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
-    ('This is a business question', 'Business and Administration', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+    ('This is a medical question', 'Science/Tech', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('This is a law/government question', 'Business', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('This is a sport', 'Sports', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 
     /* add dummy answer data - Bob's answers */
 INSERT INTO answers
@@ -45,12 +45,12 @@ VALUES
     (:'lorem_ipsum', current_timestamp, 3, (SELECT question_id FROM questions WHERE question_id=2)),
 
     /* Grant and Heather's answers to weight testing questions: Bob and Catherine will vote on these */
-    ('This Grants answer to the medical question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Grant'), (SELECT question_id FROM questions WHERE question_id=3)),
-    ('This Heathers answer to the medical question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Heather'), (SELECT question_id FROM questions WHERE question_id=3)),
-    ('This Grants answer to the history question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Grant'), (SELECT question_id FROM questions WHERE question_id=4)),
-    ('This Heathers answer to the history question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Heather'), (SELECT question_id FROM questions WHERE question_id=4)),
-    ('This Grants answer to the business question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Grant'), (SELECT question_id FROM questions WHERE question_id=5)),
-    ('This Heathers answer to the business question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Heather'), (SELECT question_id FROM questions WHERE question_id=5));
+    ('This Grants answer to the question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Grant'), (SELECT question_id FROM questions WHERE question_id=3)),
+    ('This Heathers answer to the question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Heather'), (SELECT question_id FROM questions WHERE question_id=3)),
+    ('This Grants answer to the question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Grant'), (SELECT question_id FROM questions WHERE question_id=4)),
+    ('This Heathers answer to the question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Heather'), (SELECT question_id FROM questions WHERE question_id=4)),
+    ('This Grants answer to the question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Grant'), (SELECT question_id FROM questions WHERE question_id=5)),
+    ('This Heathers answer to the question.', current_timestamp, (SELECT user_id FROM users WHERE user_name='Heather'), (SELECT question_id FROM questions WHERE question_id=5));
 
 
     /* add dummy votes data - Darcie, Eugene and Fortraine vote for one answer for each of the three questions */

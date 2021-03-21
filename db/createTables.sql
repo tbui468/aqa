@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS users;
 DROP TYPE IF EXISTS topic;
 
-CREATE TYPE topic AS ENUM ('Business and Administration', 'Science and Engineering', 'Information Technology', 'Medicine and Healthcare', 'Education', 'Law and Government');
+/*CREATE TYPE topic AS ENUM ('Business and Administration', 'Science and Engineering', 'Information Technology', 'Medicine and Healthcare', 'Education', 'Law and Government');*/
+CREATE TYPE topic AS ENUM ('Business', 'Science/Tech', 'Sports');
 
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
