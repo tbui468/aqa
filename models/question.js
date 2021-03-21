@@ -2,17 +2,32 @@ const db = require('./../db/index')
 
 class QuestionModel {
 
-    static async create(text, topic, user_id) {
+    static async create(text, user_id) {
         try{
             const queryText = `
                 INSERT INTO questions
-                    (question_text, question_topic, question_date, question_user) 
+                    (question_text, question_date, question_user) 
                 VALUES
-                    ($1, $2, current_timestamp, $3);
+                    ($1, current_timestamp, $2)
+                RETURNING question_id;
             `;
 
-            await db.query(queryText, [text, topic, user_id]);
-            return { message: 'question posted' };
+            const result = await db.query(queryText, [text, user_id]);
+            return result.rows;
+        }catch(err){
+            throw err;
+        }
+    }
+
+    static async update_topic(question_id, topic) {
+        try{
+            const queryText = `
+                UPDATE questions
+                SET question_topic = $2
+                WHERE question_id = $1;
+            `;
+            await db.query(queryText, [question_id, topic])
+            return { message: 'Question updated' };
         }catch(err){
             throw err;
         }

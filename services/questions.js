@@ -1,13 +1,28 @@
 const QuestionModel = require('./../models/question');
 const AnswerModel = require('./../models/answer');
 const VoteModel = require('./../models/vote');
+const fetch = require('node-fetch');
 
 
 class QuestionsService {
 
-    static async post_question(text, topic, user_id) {
+    static async post_question(text, user_id) {
         try{
-            await QuestionModel.create(text, topic, user_id);
+            const result = await QuestionModel.create(text, user_id);
+            const question_id = result[0].question_id;
+
+            const body = { "text": text };
+            const fetchResult = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+            const json = await fetchResult.json();
+            const topic = json.topic;
+            console.log(topic);
+
+            await QuestionModel.update_topic(question_id, "Education"); //temp: topics return by nn are not part of the enum type yet, so putting in education for default
             return { message: 'question posted' };
         }catch(err){
             throw err;
