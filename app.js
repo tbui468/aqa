@@ -1,15 +1,14 @@
-//could start replacing third party middleware with my own middleware (to learn and for ownership over more of the system)
-    //express-validator - could replace with own middleware (fourth)
-
+//main
 const express = require('express');
-const session = require('express-session'); //could replace with this with own middleware (third)
-const passport = require('passport'); //could replace with with my own middleware (first)
+const session = require('express-session'); 
+const passport = require('passport');
 const bcrypt = require('bcryptjs');
-const LocalStrategy = require('passport-local').Strategy; //could replace this with my own middleware (first)
+const LocalStrategy = require('passport-local').Strategy; 
 const helmet = require('helmet');
 const compression = require('compression');
+const cors = require('cors');
 
-require('dotenv').config(); //replace with my own stuff
+require('dotenv').config();
 
 const db = require('./db/index');
 const usersRouter = require('./routes/users');
@@ -56,22 +55,13 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-const cors = (req, res, next) => {
-    res.set({
-        'Access-Control-Allow-Origin': 'http://localhost:8080',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET, POST, DELETE, PUT'
-    });
-    next();
-}
 
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(compression());
 app.use(helmet());
-app.use(cors);
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -24,7 +24,7 @@ class QuestionsService {
 
     static async classify_question(text) {
         const body = { "text": text };
-        const fetchResult = await fetch('http://localhost:5000/predict', {
+        const fetchResult = await fetch((process.env.NN_DOMAIN + '/predict'), {
                 method: 'POST',
                 body: JSON.stringify(body),
                 headers: {'Content-Type': 'application/json'}
