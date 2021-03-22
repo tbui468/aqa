@@ -15,7 +15,7 @@ class QuestionsService {
 
             console.log(topic);
 
-            await QuestionModel.update_topic(question_id, "Education"); //temp: topics return by nn are not part of the enum type yet, so putting in education for default
+            await QuestionModel.update_topic(question_id, topic); //temp: topics return by nn are not part of the enum type yet, so putting in education for default
             return { message: 'question posted' };
         }catch(err){
             throw err;
