@@ -7,6 +7,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
@@ -59,6 +60,7 @@ passport.deserializeUser(async (id, done) => {
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 app.use(compression());
 app.use(helmet());
 app.use(cors({ credentials: true, origin: true }));
@@ -77,6 +79,9 @@ app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
 
 app.get('/profile', (req, res, next) => {
+    const sessionCookie = req.cookies['connect.sid'];
+    console.log('hiiiiiii');
+    console.log(sessionCookie);
     if(!req.user) {
         return res.status(404).json({ message: "Log in to access the profile page" });
     }else{
