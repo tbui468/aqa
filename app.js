@@ -92,8 +92,7 @@ app.get('/profile', (req, res, next) => {
     if(!req.user) {
         return res.status(404).json({ message: "Log in to access the profile page" });
     }else{
-        res.redirect('../users/' + req.user.user_id);
-        //return res.status(200).json(req.user);
+        return res.status(200).json(req.user);
     }
 });
 
