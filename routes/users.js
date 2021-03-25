@@ -16,6 +16,21 @@ router.get('/',
     ]
 );
 
+router.get('/profile',
+    [
+        AuthService.logged_in,
+        async (req, res, next) => {
+            const user_id = req.user.user_id;
+            try{
+                const user = await UsersService.show_user(user_id)
+                return res.json(user);
+            }catch(err){
+                next(err)
+            }
+        }
+    ]
+);
+
 router.post('/', 
     [
         ValidationService.validate_name,

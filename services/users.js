@@ -22,9 +22,7 @@ class UsersService {
         }
     }
 
-    //this will take the place of /profile, and replace it with /users/profile -> /user/:user_id
-    //this will automatically grab the user_id from the cookie and redirect to the correct profile data
-    //
+
     static async show_user(user_id) {
         try{
             const user = await UserModel.find_by_id(user_id);

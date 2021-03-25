@@ -86,6 +86,7 @@ app.use('/users', usersRouter);
 app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
 
+/*
 app.get('/profile', (req, res, next) => {
     //const sessionCookie = req.cookies['connect.sid'];
     //console.log(sessionCookie);
@@ -94,7 +95,7 @@ app.get('/profile', (req, res, next) => {
     }else{
         return res.status(200).json(req.user);
     }
-});
+});*/
 
 app.post('/login', [passport.authenticate('my-strategy'), 
     (req, res, next) => {

@@ -5,16 +5,16 @@ const async = require('async');
 
 
 //use this for production/deployment on heroku
-
+/*
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
-});
+});*/
 
 //use this for development
-/*
+
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -22,7 +22,7 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,
     port: 5432,
     max: 20
-});*/
+});
 
 module.exports = {
     async query(text, params) {
