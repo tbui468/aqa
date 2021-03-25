@@ -87,13 +87,13 @@ app.use('/questions', questionsRouter);
 app.use('/questions', answersRouter);
 
 app.get('/profile', (req, res, next) => {
-    const sessionCookie = req.cookies['connect.sid'];
-    console.log('hiiiiiii');
-    console.log(sessionCookie);
+    //const sessionCookie = req.cookies['connect.sid'];
+    //console.log(sessionCookie);
     if(!req.user) {
         return res.status(404).json({ message: "Log in to access the profile page" });
     }else{
-        return res.status(200).json(req.user);
+        res.redirect('../users/' + req.user.user_id);
+        //return res.status(200).json(req.user);
     }
 });
 
