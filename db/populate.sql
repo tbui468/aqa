@@ -25,13 +25,13 @@ VALUES
 INSERT INTO questions
     (question_text, question_topic, question_date, question_user) 
 VALUES
-    ('How lethal is covid-19?', 'Science/Tech', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
-    ('Was Genghis Khan a good government leader?', 'Business', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('How lethal is covid-19?', 'Health', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('Was Genghis Khan a good government leader?', 'Health', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
 
 /* Three questions to test weights of Bob and Catherine */
-    ('This is a medical question', 'Science/Tech', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
-    ('This is a law/government question', 'Business', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
-    ('This is a sport', 'Sports', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
+    ('This is a medical question', 'Health', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('This is a law/government question', 'Health', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel')),
+    ('This is a sport', 'Health', current_timestamp, (SELECT user_id FROM users WHERE user_name='Abel'));
 
     /* add dummy answer data - Bob's answers */
 INSERT INTO answers
