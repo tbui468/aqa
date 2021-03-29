@@ -60,6 +60,19 @@ class QuestionsService {
     static async get_list() {
         try{
             const questions = await QuestionModel.find_all();
+            for(let i = 0; i < questions.length; i++) {
+                const answers = await AnswerModel.find_by_question(questions[i].question_id);  
+                let question_weight = 0;
+                let top_answer = answers[0];
+                for(let j = 0; j < answers.length; j++) {
+                    question_weight += parseFloat(answers[j].answer_weight); 
+                    if(answers[j].answer_weight > top_answer.answer_weight) {
+                        top_answer = answers[j];
+                    }
+                }
+                questions[i].question_weight = question_weight;
+                questions[i].top_answer = top_answer;
+            }
             return questions;
         }catch(err){
             throw err;
