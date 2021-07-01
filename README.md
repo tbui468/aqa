@@ -7,5 +7,8 @@ The backend for 'aqa-frontend', and 'aqa-neuralnetwork' (which uses simple word 
 
 Main components:
 
-'app.js' is the main entry point 
-'db' contains
+'app.js' is the main entry point.  Calls any necessary middleware.
+'db' contains code to initiate postgresql.
+'models' contains code for the database models of questions, answers, users and votes.
+'routes' contains the RESTFUL routes.  The routes calls on any required services, and returns a json object for use by frontend.
+'services' contains code for accessing the database or outside services (such as 'aqa-neuralnetwork').
