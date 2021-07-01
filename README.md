@@ -16,3 +16,5 @@ Main components:
 'routes' contains the RESTFUL routes.  The routes calls on any required services, and returns a json object for use by frontend.
 
 'services' contains code for accessing the database or outside services (such as 'aqa-neuralnetwork').
+
+'tests' contain some Bash scripts for manually testing routes with curl.
