@@ -4,3 +4,8 @@ Anonymous question and answer (AQA) board.  As users vote for your answers for a
 Written in ExpressJS, Postgresql, and Nodejs.  
 
 The backend for 'aqa-frontend', and 'aqa-neuralnetwork' (which uses simple word vectors to attempt to classify a question by topic).
+
+Main components:
+
+'app.js' is the main entry point 
+'db' contains
